@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remote Desktop — Nubyone</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/msgpackr@1.11.8/dist/index.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --bg: #12131a;
+      --surface: #191a25;
+      --card: #1e1f2e;
+      --border: #2a2b3d;
+      --text: #e4e5f0;
+      --text-dim: #6e708a;
+      --accent: #6c63ff;
+      --accent-hover: #7c75ff;
+      --green: #3ecf8e;
+      --red: #e5484d;
+      --gray: #444;
+      --input-bg: #191a25;
+    }
+    html, body { margin: 0; padding: 0; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; }
+
+    /* ── Header ──────────────────────────────────────────────────── */
+    .remote-header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: .45rem 1rem;
+      display: flex; align-items: center; gap: .65rem;
+      flex-wrap: wrap; min-height: 50px;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .3rem .7rem; border-radius: 6px;
+      background: var(--card); color: var(--text);
+      text-decoration: none; font-size: .8rem; font-weight: 500;
+      border: 1px solid var(--border); white-space: nowrap;
+      transition: background .15s;
+    }
+    .back-btn:hover { background: #26283a; }
+
+    .remote-info { display: flex; align-items: center; gap: .75rem; flex: 1; min-width: 0; overflow: hidden; }
+    .remote-title { font-weight: 600; font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+
+    .status-row { display: flex; align-items: center; gap: .7rem; flex-wrap: wrap; }
+    .status-badge { display: flex; align-items: center; gap: .3rem; font-size: .75rem; color: var(--text-dim); white-space: nowrap; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gray); flex-shrink: 0; }
+    .status-dot.online { background: var(--green); }
+    .status-dot.error  { background: var(--red); }
+
+    .remote-controls { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; }
+    .lbl { font-size: .74rem; color: var(--text-dim); white-space: nowrap; }
+    select.ctrl-sel {
+      font-size: .78rem; padding: .25rem .45rem; border-radius: 5px;
+      background: var(--input-bg); color: var(--text);
+      border: 1px solid var(--border); outline: none; cursor: pointer;
+    }
+    .btn-ctrl {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-size: .78rem; padding: .28rem .65rem; border-radius: 5px;
+      background: var(--card); color: var(--text);
+      border: 1px solid var(--border); cursor: pointer; white-space: nowrap;
+      transition: background .15s;
+    }
+    .btn-ctrl:hover { background: #26283a; }
+    .btn-ctrl.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-ctrl.primary:hover { background: var(--accent-hover); }
+    .btn-ctrl.danger  { color: var(--red); }
+
+    /* ── Canvas wrap ─────────────────────────────────────────────── */
+    .canvas-wrap {
+      display: flex; justify-content: center; align-items: flex-start;
+      padding: .75rem; min-height: calc(100vh - 50px);
+      overflow: auto; background: var(--bg);
+    }
+    #remote-canvas {
+      display: block; cursor: crosshair; user-select: none;
+      border-radius: 6px; border: 1px solid var(--border);
+      background: #000;
+      outline: 2px solid transparent; outline-offset: 3px;
+      transition: outline-color .15s;
+    }
+    #remote-canvas:focus { outline-color: var(--accent); }
+    #remote-canvas.idle { cursor: default; }
+
+    /* ── Overlay ─────────────────────────────────────────────────── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(8,8,14,.88);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 200; gap: .9rem; text-align: center; padding: 1rem;
+    }
+    .overlay.hidden { display: none; }
+    .ov-icon { font-size: 2.4rem; color: var(--text-dim); }
+    .ov-title { font-size: 1.05rem; font-weight: 600; }
+    .ov-sub { font-size: .82rem; color: var(--text-dim); max-width: 300px; line-height: 1.5; }
+  </style>
+    <script src="/assets/branding.js"></script>
+  </head>
+<body>
+  <header class="remote-header">
+    <a href="/clients" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Clients</a>
+
+    <div class="remote-info">
+      <span class="remote-title" id="remote-title">Connecting…</span>
+      <div class="status-row">
+        <div class="status-badge">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="status-text">Offline</span>
+        </div>
+        <span id="fps-text" class="status-badge"></span>
+        <span id="res-text" class="status-badge"></span>
+      </div>
+    </div>
+
+    <div class="remote-controls">
+      <span class="lbl">Quality</span>
+      <select class="ctrl-sel" id="quality-sel">
+        <option value="20">Low</option>
+        <option value="35" selected>Medium</option>
+        <option value="60">High</option>
+        <option value="85">Best</option>
+      </select>
+      <span class="lbl">FPS</span>
+      <select class="ctrl-sel" id="fps-sel">
+        <option value="4">4</option>
+        <option value="8" selected>8</option>
+        <option value="15">15</option>
+      </select>
+      <button class="btn-ctrl primary" id="start-btn" onclick="startCapture()"><i class="fa-solid fa-play"></i> Start</button>
+      <button class="btn-ctrl danger" id="stop-btn" onclick="stopCapture()" style="display:none"><i class="fa-solid fa-stop"></i> Stop</button>
+      <button class="btn-ctrl" onclick="sendCtrlAltDel()" title="Send Ctrl+Alt+Del">Ctrl+Alt+Del</button>
+      <button class="btn-ctrl" id="fs-btn" onclick="toggleFullscreen()" title="Fullscreen"><i class="fa-solid fa-expand"></i></button>
+    </div>
+  </header>
+
+  <div class="canvas-wrap">
+    <canvas id="remote-canvas" width="1280" height="720" tabindex="0"></canvas>
+  </div>
+
+  <div class="overlay" id="main-overlay">
+    <div class="ov-icon"><i class="fa-solid fa-desktop"></i></div>
+    <div class="ov-title" id="ov-title">Connecting…</div>
+    <div class="ov-sub" id="ov-sub">Establishing connection to the target machine.</div>
+    <a href="/clients" class="back-btn" style="margin-top:.3rem">← Back to Clients</a>
+  </div>
+
+  <script type="module">
+  import { decodeMsgpack, encodeMsgpack } from '/assets/msgpack-helpers.js';
+
+  const clientId = location.pathname.replace(/^\/remote\//, '');
+  const canvas   = document.getElementById('remote-canvas');
+  const ctx2d    = canvas.getContext('2d');
+  const overlay  = document.getElementById('main-overlay');
+  const ovTitle  = document.getElementById('ov-title');
+  const ovSub    = document.getElementById('ov-sub');
+  const statusDot  = document.getElementById('status-dot');
+  const statusText = document.getElementById('status-text');
+  const fpsText    = document.getElementById('fps-text');
+  const resText    = document.getElementById('res-text');
+  const remoteTitle = document.getElementById('remote-title');
+  const startBtn = document.getElementById('start-btn');
+  const stopBtn  = document.getElementById('stop-btn');
+
+  let ws = null;
+  let capturing = false;
+  let screenW = 0, screenH = 0;
+  let frameCount = 0;
+  let fpsInterval = null;
+  let reconnectTimer = null;
+  let throttleMove = false;
+  let destroyed = false;
+
+  // ── FPS meter ─────────────────────────────────────────────────
+  fpsInterval = setInterval(() => {
+    if (capturing) {
+      fpsText.textContent = `${frameCount} fps`;
+    } else {
+      fpsText.textContent = '';
+    }
+    frameCount = 0;
+  }, 1000);
+
+  // ── WebSocket ──────────────────────────────────────────────────
+  function connect() {
+    if (destroyed) return;
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const url = `${proto}//${location.host}/api/clients/${encodeURIComponent(clientId)}/remote/ws`;
+    ws = new WebSocket(url);
+    ws.binaryType = 'arraybuffer';
+
+    ws.onopen = () => {
+      setStatus('online', 'Connected');
+    };
+
+    ws.onmessage = async (e) => {
+      let msg;
+      try {
+        if (e.data instanceof ArrayBuffer) {
+          msg = decodeMsgpack(new Uint8Array(e.data));
+        } else {
+          msg = JSON.parse(e.data);
+        }
+      } catch { return; }
+      if (!msg || typeof msg !== 'object') return;
+
+      const type = String(msg.type ?? '');
+
+      if (type === 'ready') {
+        const host = msg.host ? String(msg.host) : clientId;
+        remoteTitle.textContent = `${host} — Remote`;
+        document.title = `Remote: ${host} — Nubyone`;
+        overlay.classList.add('hidden');
+        return;
+      }
+
+      if (type === 'status' && msg.status === 'offline') {
+        setStatus('offline', 'Offline');
+        stopCapturing();
+        showOverlay('Agent Offline', 'The target machine is not connected. Reconnect the agent and try again.');
+        return;
+      }
+
+      if (type === 'remote_frame') {
+        await handleFrame(msg);
+        return;
+      }
+
+      if (type === 'ping') {
+        wsSend({ type: 'pong', ts: msg.ts });
+        return;
+      }
+    };
+
+    ws.onclose = () => {
+      setStatus('offline', 'Disconnected');
+      stopCapturing();
+      showOverlay('Disconnected', 'Lost connection to server. Reconnecting…');
+      if (!destroyed) {
+        reconnectTimer = setTimeout(connect, 3000);
+      }
+    };
+
+    ws.onerror = () => {
+      setStatus('error', 'Error');
+    };
+  }
+
+  function wsSend(msg) {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    try { ws.send(encodeMsgpack(msg)); } catch {}
+  }
+
+  function setStatus(state, label) {
+    statusDot.className = 'status-dot' + (state === 'online' ? ' online' : state === 'error' ? ' error' : '');
+    statusText.textContent = label;
+  }
+
+  function showOverlay(title, sub) {
+    ovTitle.textContent = title;
+    ovSub.textContent = sub;
+    overlay.classList.remove('hidden');
+  }
+
+  function stopCapturing() {
+    capturing = false;
+    canvas.classList.add('idle');
+    startBtn.style.display = '';
+    stopBtn.style.display = 'none';
+    fpsText.textContent = '';
+  }
+
+  // ── Frame rendering ────────────────────────────────────────────
+  async function handleFrame(msg) {
+    if (!msg.data) return;
+    frameCount++;
+
+    const raw = msg.data;
+    let bytes;
+    if (raw instanceof Uint8Array)   bytes = raw;
+    else if (Array.isArray(raw))     bytes = new Uint8Array(raw);
+    else if (raw instanceof ArrayBuffer) bytes = new Uint8Array(raw);
+    else if (typeof raw === 'string') bytes = b64ToBytes(raw);
+    else return;
+
+    if (msg.width && msg.height) {
+      const w = Number(msg.width), h = Number(msg.height);
+      if (w !== screenW || h !== screenH) {
+        screenW = w; screenH = h;
+        resText.textContent = `${w}×${h}`;
+        fitCanvas(w, h);
+      }
+    }
+
+    try {
+      const blob   = new Blob([bytes], { type: 'image/jpeg' });
+      const bitmap = await createImageBitmap(blob);
+      ctx2d.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      bitmap.close();
+    } catch {}
+  }
+
+  function b64ToBytes(b64) {
+    const bin = atob(b64);
+    const out = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+
+  function fitCanvas(w, h) {
+    const wrap  = canvas.parentElement;
+    const maxW  = wrap.clientWidth - 24;
+    const maxH  = window.innerHeight - 70;
+    const scale = Math.min(maxW / w, maxH / h, 1);
+    const cw = Math.max(320, Math.round(w * scale));
+    const ch = Math.max(180, Math.round(h * scale));
+    canvas.width  = cw;
+    canvas.height = ch;
+    canvas.style.width  = cw + 'px';
+    canvas.style.height = ch + 'px';
+  }
+
+  window.addEventListener('resize', () => {
+    if (screenW && screenH) fitCanvas(screenW, screenH);
+  });
+
+  // ── Capture control ────────────────────────────────────────────
+  window.startCapture = function() {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    const quality = parseInt(document.getElementById('quality-sel').value, 10);
+    const fps     = parseInt(document.getElementById('fps-sel').value, 10);
+    capturing = true;
+    canvas.classList.remove('idle');
+    wsSend({ type: 'remote_start', quality, fps });
+    startBtn.style.display = 'none';
+    stopBtn.style.display = '';
+    canvas.focus();
+  };
+
+  window.stopCapture = function() {
+    wsSend({ type: 'remote_stop' });
+    stopCapturing();
+  };
+
+  window.sendCtrlAltDel = function() {
+    wsSend({ type: 'remote_input', event: 'ctrl_alt_del' });
+  };
+
+  window.toggleFullscreen = function() {
+    const target = canvas.parentElement;
+    if (!document.fullscreenElement) {
+      target.requestFullscreen?.().catch(() => {});
+    } else {
+      document.exitFullscreen?.().catch(() => {});
+    }
+  };
+
+  // ── Mouse input ────────────────────────────────────────────────
+  function canvasPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width)),
+      y: Math.max(0, Math.min(1, (e.clientY - rect.top)  / rect.height)),
+    };
+  }
+
+  canvas.addEventListener('mousemove', (e) => {
+    if (!capturing || throttleMove) return;
+    throttleMove = true;
+    setTimeout(() => { throttleMove = false; }, 40);
+    const p = canvasPos(e);
+    wsSend({ type: 'remote_input', event: 'mouse', action: 'move', x: p.x, y: p.y });
+  });
+
+  canvas.addEventListener('mousedown', (e) => {
+    if (!capturing) return;
+    e.preventDefault();
+    canvas.focus();
+    const p = canvasPos(e);
+    const btn = e.button === 2 ? 'right' : e.button === 1 ? 'middle' : 'left';
+    wsSend({ type: 'remote_input', event: 'mouse', action: 'down', button: btn, x: p.x, y: p.y });
+  });
+
+  canvas.addEventListener('mouseup', (e) => {
+    if (!capturing) return;
+    const p = canvasPos(e);
+    const btn = e.button === 2 ? 'right' : e.button === 1 ? 'middle' : 'left';
+    wsSend({ type: 'remote_input', event: 'mouse', action: 'up', button: btn, x: p.x, y: p.y });
+  });
+
+  canvas.addEventListener('dblclick', (e) => {
+    if (!capturing) return;
+    const p = canvasPos(e);
+    wsSend({ type: 'remote_input', event: 'mouse', action: 'dblclick', button: 'left', x: p.x, y: p.y });
+  });
+
+  canvas.addEventListener('contextmenu', (e) => { e.preventDefault(); });
+
+  canvas.addEventListener('wheel', (e) => {
+    if (!capturing) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -3 : 3;
+    const p = canvasPos(e);
+    wsSend({ type: 'remote_input', event: 'mouse', action: 'wheel', delta, x: p.x, y: p.y });
+  }, { passive: false });
+
+  // ── Keyboard input ─────────────────────────────────────────────
+  const SPECIAL_VK = {
+    'Enter':0x0D, 'Backspace':0x08, 'Delete':0x2E, 'Escape':0x1B,
+    'Tab':0x09, 'ArrowLeft':0x25, 'ArrowUp':0x26, 'ArrowRight':0x27, 'ArrowDown':0x28,
+    'Home':0x24, 'End':0x23, 'PageUp':0x21, 'PageDown':0x22, 'Insert':0x2D,
+    'F1':0x70,'F2':0x71,'F3':0x72,'F4':0x73,'F5':0x74,'F6':0x75,
+    'F7':0x76,'F8':0x77,'F9':0x78,'F10':0x79,'F11':0x7A,'F12':0x7B,
+    'Control':0x11,'Alt':0x12,'Shift':0x10,'Meta':0x5B,'CapsLock':0x14,
+  };
+
+  canvas.addEventListener('keydown', (e) => {
+    if (!capturing) return;
+    if (e.key === 'F12') return;
+    if (e.ctrlKey && ['r','l','t','w','n'].includes(e.key.toLowerCase())) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const vk = SPECIAL_VK[e.key];
+    if (vk) {
+      wsSend({
+        type: 'remote_input', event: 'key', action: 'down', vk,
+        ctrl: e.ctrlKey, alt: e.altKey, shift: e.shiftKey,
+      });
+    } else if (e.key.length === 1) {
+      if (e.ctrlKey || e.altKey) {
+        const code = e.key.toUpperCase().charCodeAt(0);
+        wsSend({ type: 'remote_input', event: 'key', action: 'combo', vk: code, ctrl: e.ctrlKey, alt: e.altKey, shift: e.shiftKey });
+      } else {
+        wsSend({ type: 'remote_input', event: 'key', action: 'char', char: e.key });
+      }
+    }
+  });
+
+  canvas.addEventListener('keyup', (e) => {
+    if (!capturing) return;
+    e.preventDefault();
+    const vk = SPECIAL_VK[e.key];
+    if (vk) {
+      wsSend({ type: 'remote_input', event: 'key', action: 'up', vk });
+    }
+  });
+
+  // ── Init ───────────────────────────────────────────────────────
+  canvas.classList.add('idle');
+  connect();
+
+  window.addEventListener('beforeunload', () => {
+    destroyed = true;
+    clearTimeout(reconnectTimer);
+    clearInterval(fpsInterval);
+    if (capturing) wsSend({ type: 'remote_stop' });
+    ws?.close();
+  });
+  </script>
+</body>
+</html>

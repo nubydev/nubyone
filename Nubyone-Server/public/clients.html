@@ -1,0 +1,3433 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>𝗡𝘂𝗯𝘆𝗢𝗻𝗲 – Machines</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      crossorigin="anonymous"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        font-family:
+          "Inter",
+          system-ui,
+          -apple-system,
+          sans-serif;
+        color-scheme: dark;
+        --bg: #0c2645;
+        --border: rgba(34,211,238,.18);
+        --border-sub: rgba(255, 255, 255, 0.07);
+        --accent: #22d3ee;
+        --accent-soft: rgba(34,211,238,.2);
+        --text: #eef5ff;
+        --text-muted: #93c5e8;
+        --text-dim: #3d6085;
+        --card-bg: rgba(14,48,98,.58);
+        --card-hover: rgba(14,100,200,.28);
+        --border-hover: rgba(34,211,238,.6);
+      }
+      html,
+      body {
+        color: var(--text);
+        min-height: 100vh;
+      }
+      ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(34,211,238,.5);
+        border-radius: 99px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(34,211,238,.75);
+      }
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(34,211,238,.5) transparent;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        background:
+          radial-gradient(ellipse 80% 60% at 15% 10%, rgba(14,165,233,.42) 0%, transparent 55%),
+          radial-gradient(ellipse 70% 55% at 85% 80%, rgba(34,211,238,.35) 0%, transparent 55%),
+          #0c2645;
+        background-attachment: fixed;
+      }
+
+      /* ── App header + nav ───────────────────────────────── */
+      .app-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: rgba(10,30,62,.90);
+        border-bottom: 1px solid rgba(34,211,238,.18);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        flex-shrink: 0;
+      }
+      .header-brand-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.7rem 1.25rem;
+      }
+      .header-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        text-decoration: none;
+      }
+      .header-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #f0fffe;
+        letter-spacing: -0.01em;
+      }
+      .menu-toggle {
+        display: none;
+        align-items: center;
+        gap: 0.45rem;
+        background: rgba(6,100,180,.15);
+        border: 1px solid rgba(34,211,238,.28);
+        color: #7dd8f0;
+        border-radius: 10px;
+        padding: 0.45rem 0.9rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .menu-toggle:hover {
+        background: rgba(6,100,180,.25);
+      }
+      .nav-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 49;
+      }
+      .nav-overlay.open {
+        display: block;
+      }
+      .nav-panel {
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 0.55rem 1.25rem 0.65rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+      }
+      .nav-buttons-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.42rem;
+      }
+      .nav-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.52rem 1rem;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: #9db1cc;
+        font-size: 0.855rem;
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.15s;
+        white-space: nowrap;
+        font-family: inherit;
+      }
+      .nav-btn:hover {
+        background: rgba(6,120,180,.18);
+        border-color: rgba(34,211,238,.35);
+        color: #c0e8ff;
+        transform: translateY(-1px);
+      }
+      .nav-btn.active {
+        background: rgba(14,100,200,.3);
+        border-color: rgba(34,211,238,.65);
+        color: #38d6f0;
+        box-shadow: 0 0 0 1px rgba(34,211,238,.18);
+      }
+      .nav-btn i {
+        font-size: 0.82rem;
+      }
+      .nav-user-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.65rem;
+        padding-top: 0.45rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .bell-btn {
+        position: relative; display: inline-flex; align-items: center; justify-content: center;
+        width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+        background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+        color: #93c5e8; cursor: pointer; transition: all .15s; font-size: .9rem;
+      }
+      .bell-btn:hover { background: rgba(34,211,238,.12); border-color: rgba(34,211,238,.35); color: #22d3ee; }
+      .bell-btn.bell-active { background: rgba(34,211,238,.15); border-color: rgba(34,211,238,.6); color: #22d3ee; box-shadow: 0 0 0 2px rgba(34,211,238,.15); }
+      .bell-badge {
+        position: absolute; top: -5px; right: -5px;
+        min-width: 16px; height: 16px; border-radius: 99px;
+        background: #ef4444; color: #fff; font-size: .6rem; font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+        padding: 0 3px; line-height: 1; pointer-events: none;
+      }
+      .nav-user-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(4,20,50,.6);
+        border: 1px solid rgba(34,211,238,.16);
+        border-radius: 99px;
+        padding: 0.32rem 0.85rem 0.32rem 0.65rem;
+      }
+      .nav-user-pill i {
+        color: #7dd8f0;
+        font-size: 0.78rem;
+      }
+      .nav-username {
+        font-size: 0.83rem;
+        font-weight: 600;
+        color: #e0f8f8;
+      }
+      .nav-role-badge {
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: capitalize;
+        background: rgba(34,211,238,.2);
+        border: 1px solid rgba(34,211,238,.4);
+        color: #22d3ee;
+        border-radius: 99px;
+        padding: 0.13rem 0.52rem;
+      }
+      .logout-btn { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.2); color: #fca5a5; cursor: pointer; transition: all .15s; font-size: .9rem; font-family: inherit; }
+      .logout-btn:hover { background: rgba(239,68,68,.2); border-color: rgba(239,68,68,.5); }
+      @keyframes logo-bounce {
+        0%, 100% { transform: translateY(3px); }
+        50%       { transform: translateY(-3px); }
+      }
+      .logo-bounce {
+        animation: logo-bounce 2.2s ease-in-out infinite;
+        display: inline-flex;
+        align-items: center;
+      }
+      .logo-img-sm {
+        width: 30px;
+        height: 30px;
+        object-fit: contain;
+        border-radius: 7px;
+        flex-shrink: 0;
+      }
+
+      /* ── Main ─────────────────────────────────────────────── */
+      .main {
+        flex: 1;
+        padding: 1.75rem 1.5rem;
+        min-width: 0;
+      }
+      .page-header {
+        margin-bottom: 1.6rem;
+      }
+      .page-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #f8fbff;
+        letter-spacing: -0.02em;
+      }
+      .page-sub {
+        color: var(--text-muted);
+        font-size: 0.855rem;
+        margin-top: 0.22rem;
+      }
+
+      /* ── Stats ────────────────────────────────────────────── */
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0.85rem;
+        margin-bottom: 1.5rem;
+      }
+      .stat-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem 1.1rem;
+      }
+      .stat-label {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.3rem;
+      }
+      .stat-value {
+        font-size: 1.65rem;
+        font-weight: 700;
+        color: #f8fbff;
+        line-height: 1;
+      }
+
+      /* ── Toolbar ──────────────────────────────────────────── */
+      .toolbar {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        margin-bottom: 1.1rem;
+        flex-wrap: wrap;
+      }
+      .search-bar {
+        flex: 1;
+        min-width: 180px;
+        max-width: 300px;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        padding: 0.5rem 0.85rem;
+      }
+      .search-bar input {
+        background: none;
+        border: none;
+        outline: none;
+        color: var(--text);
+        font-size: 0.855rem;
+        font-family: inherit;
+        width: 100%;
+      }
+      .search-bar i {
+        color: var(--text-dim);
+        font-size: 0.82rem;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.65rem 0.95rem;
+        border-radius: 9px;
+        border: none;
+        font-size: 0.855rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition:
+          opacity 0.12s,
+          background 0.12s;
+        white-space: nowrap;
+      }
+      .btn-primary {
+        background: linear-gradient(135deg, #0891b2, #22d3ee);
+        color: #fff;
+        border: 1px solid rgba(34,211,238,.25);
+      }
+      .btn-primary:hover {
+        opacity: 0.88;
+      }
+      .btn-ghost {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(34,211,238,.15);
+        color: #9db1cc;
+      }
+      .btn-ghost:hover {
+        background: rgba(34,211,238,.07);
+        color: #e8edf2;
+      }
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.14);
+        border: 1px solid rgba(239, 68, 68, 0.28);
+        color: #fca5a5;
+      }
+      .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.24);
+      }
+      .btn-sm {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.775rem;
+      }
+      .btn-icon {
+        padding: 0.38rem 0.55rem;
+      }
+      select.btn {
+        appearance: none;
+        padding-right: 1.4rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%239db1cc'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.5rem center;
+        background-size: 14px;
+      }
+      .view-toggle {
+        display: flex;
+        gap: 2px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 2px;
+      }
+      .view-toggle button {
+        width: 32px;
+        height: 32px;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background 0.12s,
+          color 0.12s;
+      }
+      .view-toggle button.active {
+        background: rgba(34,211,238,.18);
+        color: #22d3ee;
+      }
+
+      /* ── Machine grid ─────────────────────────────────────── */
+      .machines-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 0.85rem;
+      }
+      .machines-grid.list-view {
+        grid-template-columns: 1fr;
+      }
+
+      /* ── Machine card ─────────────────────────────────────── */
+      .machine-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1.05rem 1.1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+        transition:
+          border-color 0.14s,
+          background 0.14s;
+        cursor: pointer;
+      }
+      .machine-card:hover {
+        border-color: var(--border-hover);
+        background: var(--card-hover);
+      }
+      .machines-grid.list-view .machine-card {
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.8rem 1.1rem;
+      }
+      .card-top {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.8rem;
+      }
+      .machines-grid.list-view .card-top {
+        flex: 1;
+        min-width: 0;
+        align-items: center;
+      }
+      .machine-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 9px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+      }
+      .icon-windows {
+        background: rgba(14, 165, 233, 0.1);
+        color: #38bdf8;
+      }
+      .icon-linux {
+        background: rgba(234, 179, 8, 0.1);
+        color: #fbbf24;
+      }
+      .icon-darwin {
+        background: rgba(168, 85, 247, 0.1);
+        color: #c084fc;
+      }
+      .icon-generic {
+        background: rgba(34,211,238,.12);
+        color: #22d3ee;
+      }
+      .card-main {
+        flex: 1;
+        min-width: 0;
+      }
+      .card-hostname {
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #f8fbff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .card-meta {
+        font-size: 0.745rem;
+        color: var(--text-muted);
+        margin-top: 0.2rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 0.8rem;
+      }
+      .card-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.28rem;
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .card-meta i {
+        color: var(--text-dim);
+        font-size: 0.7rem;
+      }
+      .online-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
+      }
+      .dot-online {
+        background: #22c55e;
+        box-shadow: 0 0 5px rgba(34, 197, 94, 0.6);
+      }
+      .dot-offline {
+        background: #475569;
+      }
+      .card-hw {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+      .hw-chip {
+        background: rgba(8,28,60,.4);
+        border: 1px solid rgba(34,211,238,.12);
+        border-radius: 6px;
+        padding: 0.15rem 0.5rem;
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.28rem;
+        max-width: 180px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .hw-chip i {
+        color: var(--text-dim);
+        font-size: 0.65rem;
+      }
+      .tag-chip {
+        background: rgba(34,211,238,.1);
+        border: 1px solid rgba(34,211,238,.22);
+        border-radius: 99px;
+        padding: 0.15rem 0.55rem;
+        font-size: 0.7rem;
+        color: #7dd8f0;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.28rem;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.28rem;
+        padding: 0.18rem 0.55rem;
+        border-radius: 99px;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+      .badge-online {
+        background: rgba(34, 197, 94, 0.14);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.28);
+      }
+      .badge-offline {
+        background: rgba(100, 116, 139, 0.1);
+        color: #94a3b8;
+        border: 1px solid rgba(100, 116, 139, 0.22);
+      }
+      .badge-persist {
+        background: rgba(52, 211, 153, 0.12);
+        color: #34d399;
+        border: 1px solid rgba(52, 211, 153, 0.28);
+        font-size: 0.65rem;
+      }
+      .badge-update {
+        background: rgba(251, 191, 36, 0.12);
+        color: #fbbf24;
+        border: 1px solid rgba(251, 191, 36, 0.28);
+        font-size: 0.65rem;
+        cursor: default;
+      }
+      .card-actions {
+        display: flex;
+        gap: 0.38rem;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+      }
+      .machines-grid:not(.list-view) .card-actions {
+        margin-top: 0.15rem;
+      }
+      @media (max-width: 640px) {
+        .machines-grid.list-view .machine-card {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0.7rem;
+          padding: 1.05rem 1.1rem;
+        }
+        .machines-grid.list-view .card-top {
+          align-items: flex-start;
+        }
+        .machines-grid.list-view .card-actions {
+          margin-top: 0;
+        }
+      }
+
+      /* ── Pagination ───────────────────────────────────────── */
+      .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 1.4rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .page-info {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+      }
+      .page-btns {
+        display: flex;
+        gap: 0.4rem;
+      }
+
+      /* ── Empty ────────────────────────────────────────────── */
+      .empty-state {
+        text-align: center;
+        padding: 4rem 1rem;
+        color: var(--text-dim);
+        grid-column: 1/-1;
+      }
+      .empty-state i {
+        font-size: 2.2rem;
+        margin-bottom: 0.85rem;
+        display: block;
+      }
+      .empty-state p {
+        font-size: 0.875rem;
+      }
+      .spinner {
+        display: inline-block;
+        width: 22px;
+        height: 22px;
+        border: 2px solid rgba(255, 255, 255, 0.12);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ── Slide-over detail ────────────────────────────────── */
+      .slideover-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 300;
+      }
+      .slideover-overlay.open {
+        display: flex;
+      }
+      .slideover-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+      }
+      .slideover {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: min(480px, 100vw);
+        background: rgba(4,14,32,.97);
+        border-left: 1px solid rgba(34,211,238,.13);
+        display: flex;
+        flex-direction: column;
+        transform: translateX(100%);
+        transition: transform 0.22s ease;
+      }
+      .slideover-overlay.open .slideover {
+        transform: translateX(0);
+      }
+      .slideover-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid rgba(34,211,238,.1);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .slideover-title {
+        flex: 1;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #f0fffe;
+        letter-spacing: 0.02em;
+      }
+      .close-btn {
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 1.05rem;
+        padding: 0.3rem 0.45rem;
+        border-radius: 7px;
+      }
+      .close-btn:hover {
+        color: var(--text);
+        background: rgba(34,211,238,.08);
+      }
+
+      /* ── Slideover commands dropdown ────────────────────── */
+      .so-cmds-wrap {
+        position: relative;
+        flex-shrink: 0;
+      }
+      .so-cmds-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.38rem;
+        padding: 0.38rem 0.7rem;
+        background: rgba(34,211,238,.07);
+        border: 1px solid rgba(34,211,238,.18);
+        border-radius: 8px;
+        color: #9db1cc;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 600;
+        font-family: inherit;
+        transition: background 0.12s, color 0.12s, border-color 0.12s;
+        white-space: nowrap;
+      }
+      .so-cmds-btn:hover {
+        background: rgba(34,211,238,.13);
+        border-color: rgba(34,211,238,.32);
+        color: #e8edf2;
+      }
+      .so-cmds-chevron {
+        font-size: 0.6rem;
+        opacity: 0.55;
+        transition: transform 0.15s;
+      }
+      .so-cmds-wrap.open .so-cmds-chevron {
+        transform: rotate(180deg);
+      }
+      .so-dropdown {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: calc(100% + 7px);
+        min-width: 210px;
+        background: rgba(4,12,32,.98);
+        border: 1px solid rgba(34,211,238,.16);
+        border-radius: 11px;
+        padding: 5px;
+        z-index: 500;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(34,211,238,.06);
+        flex-direction: column;
+        gap: 1px;
+        backdrop-filter: blur(12px);
+      }
+      .so-cmds-wrap.open .so-dropdown {
+        display: flex;
+      }
+      .so-dd-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.52rem 0.8rem;
+        border-radius: 7px;
+        border: none;
+        background: transparent;
+        color: #9db1cc;
+        cursor: pointer;
+        font-size: 0.83rem;
+        font-family: inherit;
+        text-align: left;
+        width: 100%;
+        transition: background 0.1s, color 0.1s;
+      }
+      .so-dd-item:hover:not(:disabled) {
+        background: rgba(34,211,238,.08);
+        color: #e8edf2;
+      }
+      .so-dd-item.danger:hover:not(:disabled) {
+        background: rgba(239, 68, 68, 0.1);
+        color: #fca5a5;
+      }
+      .so-dd-item:disabled {
+        opacity: 0.32;
+        cursor: not-allowed;
+      }
+      .so-dd-icon {
+        width: 16px;
+        text-align: center;
+        font-size: 0.78rem;
+        flex-shrink: 0;
+      }
+      .so-dd-divider {
+        height: 1px;
+        background: rgba(34,211,238,.1);
+        margin: 3px 4px;
+        flex-shrink: 0;
+      }
+
+      /* ── File Transfer tabs ──────────────────────────────── */
+      .ft-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        padding: .33rem .72rem;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        background: none;
+        color: var(--text-muted);
+        font-size: .8rem;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background .12s, color .12s, border-color .12s;
+      }
+      .ft-tab:hover { background: rgba(34,211,238,.07); color: var(--text); }
+      .ft-tab.active {
+        background: rgba(34,211,238,.12);
+        border-color: rgba(34,211,238,.3);
+        color: #e2f8ff;
+      }
+      .ft-status-ok  { color: #34d399; font-size: .8rem; }
+      .ft-status-err { color: #f87171; font-size: .8rem; }
+
+      /* ── Process Manager table ───────────────────────────── */
+      .proc-table { width: 100%; border-collapse: collapse; font-size: .78rem; }
+      .proc-table th, .proc-table td {
+        padding: .42rem .75rem;
+        white-space: nowrap;
+        border-bottom: 1px solid rgba(34,211,238,.07);
+      }
+      .proc-table th {
+        text-align: left;
+        color: var(--text-muted);
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        background: var(--surface-2);
+        cursor: pointer;
+        user-select: none;
+      }
+      .proc-table th:hover { color: var(--text); }
+      .proc-table tr:last-child td { border-bottom: none; }
+      .proc-table tr:hover td { background: rgba(34,211,238,.04); }
+      .proc-mem { text-align: right; }
+      .proc-kill-btn {
+        padding: .18rem .52rem;
+        font-size: .72rem;
+        border: 1px solid rgba(239,68,68,.4);
+        border-radius: 5px;
+        background: transparent;
+        color: #f87171;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background .1s;
+      }
+      .proc-kill-btn:hover { background: rgba(239,68,68,.15); }
+      .proc-kill-btn:disabled { opacity: .35; cursor: not-allowed; }
+      .slideover-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .slideover-footer {
+        padding: 0.85rem 1.25rem;
+        border-top: 1px solid rgba(34,211,238,.1);
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .section-label {
+        font-size: 0.67rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(34,211,238,.6);
+        margin-bottom: 0.42rem;
+      }
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.42rem;
+      }
+      .detail-item {
+        background: rgba(14,48,98,.62);
+        border: 1px solid rgba(34,211,238,.1);
+        border-radius: 9px;
+        padding: 0.55rem 0.85rem;
+      }
+      .di-label {
+        font-size: 0.63rem;
+        color: rgba(157, 177, 204, 0.65);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.2rem;
+      }
+      .di-value {
+        font-size: 0.84rem;
+        color: #e8edf2;
+        word-break: break-all;
+      }
+      .di-value.mono {
+        font-family: monospace;
+        font-size: 0.78rem;
+        color: #9db1cc;
+      }
+
+      /* ── File Browser ────────────────────────────────────── */
+      .fb-path-bar {
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .6rem 1.2rem .5rem;
+        border-bottom: 1px solid rgba(34,211,238,.1);
+        flex-wrap: wrap;
+      }
+      .fb-root-btn {
+        padding: .18rem .52rem;
+        background: rgba(34,211,238,.07);
+        border: 1px solid rgba(34,211,238,.16);
+        border-radius: 6px;
+        color: #67e8f9;
+        font-size: .69rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-mono, monospace);
+        transition: background .13s, border-color .13s;
+        white-space: nowrap;
+      }
+      .fb-root-btn:hover { background: rgba(34,211,238,.16); border-color: rgba(34,211,238,.38); }
+      .fb-path-input {
+        flex: 1;
+        min-width: 160px;
+        background: rgba(14,48,98,.62);
+        border: 1px solid rgba(34,211,238,.15);
+        border-radius: 8px;
+        color: #e8edf2;
+        font-size: .78rem;
+        font-family: var(--font-mono, monospace);
+        padding: .3rem .65rem;
+        outline: none;
+        transition: border-color .13s;
+      }
+      .fb-path-input:focus { border-color: rgba(34,211,238,.45); }
+      .fb-crumb-bar {
+        display: flex;
+        align-items: center;
+        gap: .3rem;
+        padding: .28rem 1.2rem .22rem;
+        border-bottom: 1px solid rgba(34,211,238,.06);
+        min-height: 2rem;
+        flex-wrap: nowrap;
+        overflow: hidden;
+      }
+      .fb-crumb { flex: 1; font-size: .7rem; font-family: var(--font-mono, monospace); color: #475569; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .fb-crumb span { cursor: pointer; transition: color .1s; }
+      .fb-crumb span:hover { color: #67e8f9; }
+      .fb-file-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .78rem;
+        table-layout: fixed;
+      }
+      .fb-file-table th {
+        position: sticky;
+        top: 0;
+        background: rgba(4,14,32,.98);
+        color: #64748b;
+        font-size: .65rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        padding: .35rem .75rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(34,211,238,.08);
+        white-space: nowrap;
+        cursor: pointer;
+        user-select: none;
+        overflow: hidden;
+      }
+      .fb-file-table th:hover { color: #94a3b8; }
+      .fb-file-table td {
+        padding: .35rem .75rem;
+        border-bottom: 1px solid rgba(34,211,238,.04);
+        color: #cbd5e1;
+        vertical-align: middle;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .fb-file-table td.fb-name { overflow: hidden; text-overflow: ellipsis; }
+      .fb-file-table tr.fb-dir-row { cursor: pointer; }
+      .fb-file-table tr.fb-dir-row:hover td { color: #67e8f9; background: rgba(34,211,238,.06); }
+      .fb-file-table tr:not(.fb-dir-row):hover td { background: rgba(34,211,238,.04); }
+      .fb-file-table td.mono { font-family: var(--font-mono, monospace); font-size: .72rem; }
+      .fb-row-actions {
+        display: inline-flex;
+        gap: .18rem;
+        margin-left: .35rem;
+        opacity: 0;
+        transition: opacity .12s;
+        vertical-align: middle;
+        flex-shrink: 0;
+      }
+      .fb-file-table tr:hover .fb-row-actions { opacity: 1; }
+      .fb-dir-icon { color: #f59e0b; margin-right: .3rem; }
+      .fb-file-icon { color: #64748b; margin-right: .3rem; }
+      .fb-act-btn {
+        padding: .16rem .4rem;
+        background: transparent;
+        border: 1px solid rgba(100,116,139,.22);
+        border-radius: 5px;
+        color: #64748b;
+        font-size: .68rem;
+        cursor: pointer;
+        transition: background .12s, color .12s, border-color .12s;
+        margin-left: .18rem;
+      }
+      .fb-act-btn:hover { background: rgba(34,211,238,.08); color: #67e8f9; border-color: rgba(34,211,238,.28); }
+      .fb-act-btn.danger:hover { background: rgba(239,68,68,.1); color: #f87171; border-color: rgba(239,68,68,.28); }
+      .fb-act-btn:disabled { opacity: .4; cursor: not-allowed; }
+      .fb-upload-bar {
+        border-top: 1px solid rgba(34,211,238,.1);
+        padding: .6rem 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        flex-wrap: wrap;
+      }
+      .fb-upload-status { font-size: .75rem; flex: 1; min-width: 120px; }
+      .fb-empty { padding: 2.5rem 1.4rem; text-align: center; color: #475569; font-size: .8rem; }
+      .fb-err-msg { color: #f87171; }
+      .fb-ok-msg { color: #4ade80; }
+      .fb-size { color: #64748b; font-size: .72rem; }
+      .fb-mtime { color: #475569; font-size: .7rem; font-family: var(--font-mono, monospace); }
+
+      /* ── Registry Browser ────────────────────────────────── */
+      .reg-path-bar {
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        padding: .65rem 1.2rem .55rem;
+        border-bottom: 1px solid rgba(34,211,238,.1);
+        flex-wrap: wrap;
+      }
+      .reg-hive-btn {
+        padding: .18rem .55rem;
+        background: rgba(34,211,238,.07);
+        border: 1px solid rgba(34,211,238,.16);
+        border-radius: 6px;
+        color: #67e8f9;
+        font-size: .7rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: var(--font-mono, monospace);
+        transition: background .13s, border-color .13s;
+        white-space: nowrap;
+      }
+      .reg-hive-btn:hover { background: rgba(34,211,238,.16); border-color: rgba(34,211,238,.38); }
+      .reg-path-input {
+        flex: 1;
+        min-width: 160px;
+        background: rgba(14,48,98,.62);
+        border: 1px solid rgba(34,211,238,.15);
+        border-radius: 8px;
+        color: #e8edf2;
+        font-size: .78rem;
+        font-family: var(--font-mono, monospace);
+        padding: .32rem .65rem;
+        outline: none;
+        transition: border-color .13s;
+      }
+      .reg-path-input:focus { border-color: rgba(34,211,238,.45); }
+      .reg-body {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .reg-keys-pane {
+        width: 220px;
+        min-width: 140px;
+        flex-shrink: 0;
+        border-right: 1px solid rgba(34,211,238,.08);
+        overflow-y: auto;
+        padding: .5rem 0;
+      }
+      .reg-key-item {
+        display: flex;
+        align-items: center;
+        gap: .4rem;
+        padding: .32rem .85rem;
+        font-size: .78rem;
+        font-family: var(--font-mono, monospace);
+        color: #94a3b8;
+        cursor: pointer;
+        transition: background .1s, color .1s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        border-left: 2px solid transparent;
+      }
+      .reg-key-item:hover { background: rgba(34,211,238,.06); color: #e8edf2; border-left-color: rgba(34,211,238,.3); }
+      .reg-key-item i { color: #f59e0b; font-size: .7rem; flex-shrink: 0; }
+      .reg-key-up {
+        color: #64748b;
+        border-left-color: transparent !important;
+      }
+      .reg-key-up i { color: #64748b; }
+      .reg-values-pane {
+        flex: 1;
+        overflow-y: auto;
+        padding: .5rem 0;
+        min-width: 0;
+      }
+      .reg-val-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .77rem;
+      }
+      .reg-val-table th {
+        position: sticky;
+        top: 0;
+        background: rgba(4,14,32,.98);
+        color: #64748b;
+        font-size: .66rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        padding: .35rem .75rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(34,211,238,.08);
+        cursor: default;
+        white-space: nowrap;
+      }
+      .reg-val-table td {
+        padding: .35rem .75rem;
+        border-bottom: 1px solid rgba(34,211,238,.05);
+        color: #cbd5e1;
+        vertical-align: middle;
+        max-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .reg-val-table td.mono { font-family: var(--font-mono, monospace); font-size: .72rem; }
+      .reg-val-table tr:hover td { background: rgba(34,211,238,.04); }
+      .reg-type-badge {
+        display: inline-block;
+        padding: .06rem .35rem;
+        background: rgba(34,211,238,.08);
+        border: 1px solid rgba(34,211,238,.14);
+        border-radius: 4px;
+        font-size: .63rem;
+        font-family: var(--font-mono, monospace);
+        color: #67e8f9;
+        white-space: nowrap;
+      }
+      .reg-action-btn {
+        padding: .18rem .42rem;
+        background: transparent;
+        border: 1px solid rgba(100,116,139,.25);
+        border-radius: 5px;
+        color: #64748b;
+        font-size: .7rem;
+        cursor: pointer;
+        transition: background .12s, color .12s, border-color .12s;
+        margin-left: .2rem;
+      }
+      .reg-action-btn:hover { background: rgba(34,211,238,.08); color: #67e8f9; border-color: rgba(34,211,238,.3); }
+      .reg-action-btn.danger:hover { background: rgba(239,68,68,.1); color: #f87171; border-color: rgba(239,68,68,.3); }
+      .reg-add-form {
+        border-top: 1px solid rgba(34,211,238,.1);
+        padding: .75rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+      }
+      .reg-add-row {
+        display: flex;
+        gap: .5rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .reg-add-row input, .reg-add-row select {
+        background: rgba(14,48,98,.62);
+        border: 1px solid rgba(34,211,238,.15);
+        border-radius: 7px;
+        color: #e8edf2;
+        font-size: .78rem;
+        padding: .28rem .6rem;
+        outline: none;
+        font-family: inherit;
+        transition: border-color .13s;
+      }
+      .reg-add-row input:focus, .reg-add-row select:focus { border-color: rgba(34,211,238,.4); }
+      .reg-add-row input.reg-name-inp { width: 140px; }
+      .reg-add-row input.reg-data-inp { flex: 1; min-width: 120px; }
+      .reg-add-row select { width: 120px; }
+      .reg-status {
+        font-size: .75rem;
+        padding: .25rem 0;
+        min-height: 1.1rem;
+      }
+      .reg-empty {
+        padding: 2.5rem 1.4rem;
+        text-align: center;
+        color: #475569;
+        font-size: .8rem;
+      }
+      .reg-loading {
+        padding: 2.5rem;
+        text-align: center;
+      }
+      .reg-err-msg { color: #f87171; }
+      .reg-ok-msg { color: #4ade80; }
+      .reg-delete-key-bar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: .35rem 1.2rem .2rem;
+        border-bottom: 1px solid rgba(34,211,238,.06);
+        gap: .5rem;
+        min-height: 2.2rem;
+      }
+      .reg-crumb {
+        flex: 1;
+        font-size: .7rem;
+        font-family: var(--font-mono, monospace);
+        color: #475569;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .reg-crumb span { color: #94a3b8; }
+
+      /* ── Tag modal ────────────────────────────────────────── */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.72);
+        z-index: 400;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal {
+        background: rgba(4,14,32,.98);
+        border: 1px solid rgba(34,211,238,.13);
+        border-radius: 16px;
+        width: 100%;
+        max-width: 420px;
+      }
+      .modal-header {
+        padding: 1.15rem 1.4rem 1rem;
+        border-bottom: 1px solid rgba(34,211,238,.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .modal-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #f0fffe;
+      }
+      .modal-body {
+        padding: 1.1rem 1.4rem 1.4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+      }
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.38rem;
+      }
+      .form-field label {
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+      .form-field input,
+      .form-field textarea {
+        background: rgba(8,28,60,.4);
+        border: 1px solid rgba(34,211,238,.15);
+        border-radius: 9px;
+        color: #e8edf2;
+        font-family: inherit;
+        font-size: 0.855rem;
+        padding: 0.62rem 0.88rem;
+        outline: none;
+        resize: vertical;
+      }
+      .form-field input:focus,
+      .form-field textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(34,211,238,.18);
+      }
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.65rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(34,211,238,.1);
+        margin-top: 0.25rem;
+      }
+
+      /* ── Screenshot modal ────────────────────────────────── */
+      .ss-modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.88);
+        z-index: 600;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        flex-direction: column;
+        gap: .75rem;
+      }
+      .ss-modal-overlay.open { display: flex; }
+      .ss-modal-box {
+        background: rgba(4,14,32,.97);
+        border: 1px solid rgba(34,211,238,.15);
+        border-radius: 14px;
+        width: 100%;
+        max-width: 960px;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .ss-modal-header {
+        padding: .85rem 1.1rem;
+        border-bottom: 1px solid rgba(34,211,238,.1);
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+        flex-wrap: wrap;
+      }
+      .ss-modal-title {
+        flex: 1;
+        font-size: .9rem;
+        font-weight: 700;
+        color: #f0fffe;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .ss-modal-meta {
+        font-size: .72rem;
+        color: var(--text-muted);
+        flex-shrink: 0;
+      }
+      .ss-modal-body {
+        overflow: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 160px;
+        padding: .75rem;
+        background: #030c1d;
+      }
+      .ss-modal-body img {
+        max-width: 100%;
+        max-height: calc(90vh - 130px);
+        border-radius: 6px;
+        display: block;
+      }
+      .ss-spinner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .7rem;
+        color: var(--text-muted);
+        font-size: .82rem;
+        padding: 2.5rem 1rem;
+      }
+      .ss-error {
+        color: #fca5a5;
+        font-size: .82rem;
+        padding: 1.8rem 1rem;
+        text-align: center;
+      }
+
+      /* ── Toast ────────────────────────────────────────────── */
+      #toast-wrap {
+        position: fixed;
+        bottom: 1.4rem;
+        right: 1.4rem;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+      }
+      .toast {
+        background: #161b2e;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 0.7rem 1rem;
+        font-size: 0.84rem;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        animation: slideUp 0.2s ease;
+      }
+      .toast.success {
+        border-color: rgba(34, 197, 94, 0.3);
+      }
+      .toast.error {
+        border-color: rgba(239, 68, 68, 0.3);
+      }
+      .toast.success i {
+        color: #4ade80;
+      }
+      .toast.error i {
+        color: #fca5a5;
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ── Responsive ───────────────────────────────────────── */
+      @media (max-width: 768px) {
+        .menu-toggle {
+          display: flex;
+        }
+        .nav-panel {
+          display: none;
+        }
+        .nav-panel.open {
+          display: flex;
+          flex-direction: column;
+          gap: 0.45rem;
+        }
+        .nav-user-row {
+          flex-wrap: nowrap;
+        }
+        .nav-user-pill { justify-self: center; }
+        .main {
+          padding: 1.25rem 1rem;
+        }
+      }
+      @media (max-width: 600px) {
+        .stats-row {
+          grid-template-columns: 1fr 1fr;
+        }
+        .machines-grid {
+          grid-template-columns: 1fr;
+        }
+        .toolbar {
+          gap: 0.5rem;
+        }
+        .search-bar {
+          min-width: 0;
+          max-width: none;
+          flex: 1;
+        }
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @keyframes logo-bounce {
+        0%, 100% { transform: translateY(3px); }
+        50%       { transform: translateY(-3px); }
+      }
+      .logo-bounce {
+        animation: logo-bounce 2.2s ease-in-out infinite;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      /* ── Desktop single-row header ───────────────────────── */
+      @media (min-width: 769px) {
+        .app-header {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          padding: 0 1.25rem;
+        }
+        .header-brand-row {
+          padding: 0.55rem 0;
+          padding-right: 1rem;
+          flex-shrink: 0;
+        }
+        .nav-panel {
+          flex: 1;
+          flex-direction: row;
+          align-items: center;
+          border-top: none;
+          padding: 0;
+          gap: 0.45rem;
+        }
+        .nav-buttons-row {
+          flex: 1;
+          flex-wrap: nowrap;
+          gap: 0.3rem;
+        }
+        .nav-user-row {
+          padding-top: 0;
+          border-top: none;
+          flex-wrap: nowrap;
+        }
+      }
+    </style>
+      <script src="/assets/branding.js"></script>
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="header-brand-row">
+        <a href="/clients" class="header-brand">
+          <span class="logo-bounce"
+            ><img src="/assets/logo.png" alt="𝗡𝘂𝗯𝘆𝗢𝗻𝗲" class="logo-img-sm"
+          /></span>
+          <span class="header-name">𝗡𝘂𝗯𝘆𝗢𝗻𝗲</span>
+        </a>
+        <button class="menu-toggle" onclick="toggleNav()" aria-label="Menu">
+          <i class="fa-solid fa-bars"></i> Menu
+        </button>
+      </div>
+      <div class="nav-panel" id="nav-panel">
+        <div class="nav-buttons-row">
+          <a href="/clients" class="nav-btn active"><i class="fa-solid fa-desktop"></i> Clients</a>
+          <a href="/build" class="nav-btn"><i class="fa-solid fa-hammer"></i> Builder</a>
+          <a href="/scripts" class="nav-btn"><i class="fa-solid fa-code"></i> Scripts</a>
+          <a href="/users" class="nav-btn" id="admin-nav-btn" style="display:none"><i class="fa-solid fa-users"></i> Users</a>
+          <a href="/settings" class="nav-btn" id="settings-nav-btn" style="display:none"><i class="fa-solid fa-gear"></i> Settings</a>
+        </div>
+        <div class="nav-user-row">
+          <button class="bell-btn" id="bell-btn" onclick="openNotifDrawer()" title="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="bell-badge" id="bell-badge" style="display:none"></span>
+          </button>
+          <div class="nav-user-pill">
+            <i class="fa-solid fa-user"></i>
+            <span class="nav-username" id="username-display">Loading…</span>
+            <span class="nav-role-badge" id="role-display">—</span>
+          </div>
+          <button class="logout-btn" onclick="logout()" title="Sign out">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="page-header">
+        <div class="page-title">Machines</div>
+        <div class="page-sub">
+          Connected agents — double-click the agent binary to connect a new
+          machine
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total</div>
+          <div class="stat-value" id="stat-total">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Online</div>
+          <div class="stat-value" id="stat-online" style="color: #4ade80">
+            —
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Offline</div>
+          <div class="stat-value" id="stat-offline" style="color: #94a3b8">
+            —
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Tagged</div>
+          <div class="stat-value" id="stat-tagged" style="color: #a5b4fc">
+            —
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <label class="search-bar">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            id="search-input"
+            type="search"
+            placeholder="Search host, user, IP…"
+            oninput="onSearch()"
+          />
+        </label>
+        <select
+          id="status-filter"
+          class="btn btn-ghost"
+          onchange="onFilterChange()"
+        >
+          <option value="">All Status</option>
+          <option value="online">Online</option>
+          <option value="offline">Offline</option>
+        </select>
+        <select
+          id="sort-select"
+          class="btn btn-ghost"
+          onchange="onFilterChange()"
+        >
+          <option value="last_seen">Last Seen</option>
+          <option value="host">Hostname</option>
+          <option value="online_first">Online First</option>
+        </select>
+        <button
+          class="btn btn-ghost btn-icon"
+          onclick="loadMachines()"
+          title="Refresh"
+        >
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+        <button
+          id="wipe-offline-btn"
+          class="btn btn-ghost btn-icon"
+          onclick="wipeOfflineClients()"
+          title="Remove all offline clients from the dashboard. They will reappear if they reconnect."
+          style="display:none;color:#fca5a5;border-color:rgba(239,68,68,.35);"
+        >
+          <i class="fa-solid fa-broom"></i>
+        </button>
+        <div class="view-toggle" style="margin-left: auto">
+          <button
+            id="view-grid"
+            class="active"
+            onclick="setView('grid')"
+            title="Grid"
+          >
+            <i class="fa-solid fa-grip"></i>
+          </button>
+          <button id="view-list" onclick="setView('list')" title="List">
+            <i class="fa-solid fa-list"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="machines-grid" id="machines-grid">
+        <div class="empty-state">
+          <div class="spinner" style="margin: 0 auto 0.9rem"></div>
+          <p>Loading machines…</p>
+        </div>
+      </div>
+
+      <div class="pagination" id="pagination" style="display: none">
+        <div class="page-info" id="page-info"></div>
+        <div class="page-btns">
+          <button
+            class="btn btn-ghost btn-sm"
+            id="prev-btn"
+            onclick="changePage(-1)"
+          >
+            <i class="fa-solid fa-chevron-left"></i> Prev
+          </button>
+          <button
+            class="btn btn-ghost btn-sm"
+            id="next-btn"
+            onclick="changePage(1)"
+          >
+            Next <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Machine detail slide-over -->
+    <div class="slideover-overlay" id="detail-so">
+      <div class="slideover-backdrop" onclick="closeDetail()"></div>
+      <div class="slideover">
+        <div class="slideover-header">
+          <div class="slideover-title" id="so-title">Machine Details</div>
+          <div class="so-cmds-wrap" id="so-cmds-wrap">
+            <button class="so-cmds-btn" onclick="toggleSoMenu(event)">
+              <i class="fa-solid fa-bars"></i>
+              <span>Commands</span>
+              <i class="fa-solid fa-chevron-down so-cmds-chevron"></i>
+            </button>
+            <div class="so-dropdown" id="so-dropdown"></div>
+          </div>
+          <button class="close-btn" onclick="closeDetail()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="slideover-body" id="so-body"></div>
+      </div>
+    </div>
+
+    <!-- Tag/note modal -->
+    <div class="modal-overlay" id="tag-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title">
+            <i
+              class="fa-solid fa-tag"
+              style="color: var(--accent); margin-right: 0.45rem"
+            ></i
+            >Edit Label &amp; Note
+          </div>
+          <button class="close-btn" onclick="closeTagModal()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-field">
+            <label>Label / Tag</label>
+            <input
+              id="tag-input"
+              type="text"
+              placeholder="e.g. Production Server, Dev Machine…"
+              maxlength="80"
+            />
+          </div>
+          <div class="form-field">
+            <label>Note</label>
+            <textarea
+              id="note-input"
+              rows="3"
+              placeholder="Any notes about this machine…"
+              maxlength="1000"
+            ></textarea>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="closeTagModal()">
+              Cancel
+            </button>
+            <button class="btn btn-primary" onclick="saveTag()">
+              <i class="fa-solid fa-check"></i> Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screenshot modal -->
+    <div class="ss-modal-overlay" id="ss-modal" onclick="closeSsModal(event)">
+      <div class="ss-modal-box" onclick="event.stopPropagation()">
+        <div class="ss-modal-header">
+          <i class="fa-solid fa-camera" style="color:var(--accent);flex-shrink:0;font-size:.85rem;"></i>
+          <div class="ss-modal-title" id="ss-modal-title">Screenshot</div>
+          <span class="ss-modal-meta" id="ss-modal-meta"></span>
+          <a id="ss-download-btn" class="btn btn-ghost btn-sm" style="display:none;text-decoration:none;" download="screenshot.jpg">
+            <i class="fa-solid fa-download"></i> Save
+          </a>
+          <button class="close-btn" onclick="closeSsModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="ss-modal-body" id="ss-modal-body">
+          <div class="ss-spinner">
+            <div class="spinner"></div>
+            <span>Requesting screen capture…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- File Transfer modal -->
+    <div class="modal-overlay" id="ft-modal">
+      <div class="modal" style="max-width:520px;width:96vw;">
+        <div class="modal-header">
+          <i class="fa-solid fa-folder-open" style="color:var(--accent);margin-right:.5rem;font-size:.85rem;"></i>
+          <div class="modal-title" id="ft-modal-title">File Transfer</div>
+          <button class="close-btn" onclick="closeFtModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+          <div style="display:flex;gap:.5rem;border-bottom:1px solid rgba(34,211,238,.1);padding-bottom:.75rem;">
+            <button class="ft-tab active" id="ft-tab-push" onclick="switchFtTab('push')">
+              <i class="fa-solid fa-upload"></i> Upload to Agent
+            </button>
+            <button class="ft-tab" id="ft-tab-pull" onclick="switchFtTab('pull')">
+              <i class="fa-solid fa-download"></i> Download from Agent
+            </button>
+          </div>
+
+          <div id="ft-push-pane">
+            <div class="form-field">
+              <label>File to upload</label>
+              <input type="file" id="ft-file-input"
+                style="padding:.5rem;background:rgba(8,28,60,.4);border:1px solid rgba(34,211,238,.15);border-radius:9px;color:#e8edf2;font-size:.82rem;width:100%;box-sizing:border-box;" />
+            </div>
+            <div class="form-field">
+              <label>Destination path on agent</label>
+              <input type="text" id="ft-dest-path" placeholder="e.g. C:\Temp\file.exe  or  /tmp/file" />
+            </div>
+            <div id="ft-push-status"></div>
+            <div class="modal-footer">
+              <button class="btn btn-ghost" onclick="closeFtModal()">Cancel</button>
+              <button class="btn btn-primary" id="ft-push-btn" onclick="doFilePush()">
+                <i class="fa-solid fa-upload"></i> Upload
+              </button>
+            </div>
+          </div>
+
+          <div id="ft-pull-pane" style="display:none;">
+            <div class="form-field">
+              <label>File path on agent</label>
+              <input type="text" id="ft-src-path" placeholder="e.g. C:\Windows\System32\drivers\etc\hosts" />
+            </div>
+            <div id="ft-pull-status"></div>
+            <div class="modal-footer">
+              <button class="btn btn-ghost" onclick="closeFtModal()">Cancel</button>
+              <button class="btn btn-primary" id="ft-pull-btn" onclick="doFilePull()">
+                <i class="fa-solid fa-download"></i> Download
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Process Manager modal -->
+    <div class="modal-overlay" id="proc-modal">
+      <div class="modal" style="max-width:700px;width:96vw;">
+        <div class="modal-header">
+          <i class="fa-solid fa-microchip" style="color:var(--accent);margin-right:.5rem;font-size:.85rem;"></i>
+          <div class="modal-title" id="proc-modal-title">Process Manager</div>
+          <button class="btn btn-ghost btn-sm" id="proc-refresh-btn" onclick="loadProcs()" style="margin-left:auto;margin-right:.5rem;font-size:.78rem;">
+            <i class="fa-solid fa-rotate"></i> Refresh
+          </button>
+          <button class="close-btn" onclick="closeProcModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="proc-loading" style="padding:2.5rem;text-align:center;">
+          <div class="spinner" style="margin:0 auto 1rem;"></div>
+          <span style="color:var(--text-muted);font-size:.83rem;">Loading process list…</span>
+        </div>
+        <div id="proc-table-wrap" style="display:none;max-height:62vh;overflow-y:auto;">
+          <table class="proc-table">
+            <thead>
+              <tr>
+                <th onclick="sortProcs('pid')" title="Sort by PID">PID</th>
+                <th onclick="sortProcs('name')" title="Sort by name">Process</th>
+                <th onclick="sortProcs('user')" title="Sort by user">User</th>
+                <th class="proc-mem" onclick="sortProcs('mem')" title="Sort by memory">Memory</th>
+                <th style="text-align:center;cursor:default;"></th>
+              </tr>
+            </thead>
+            <tbody id="proc-tbody"></tbody>
+          </table>
+        </div>
+        <div id="proc-error" style="display:none;padding:2rem;text-align:center;">
+          <i class="fa-solid fa-triangle-exclamation" style="color:#f87171;font-size:1.4rem;display:block;margin-bottom:.5rem;"></i>
+          <span id="proc-error-msg" style="color:#f87171;font-size:.83rem;"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- File Browser modal -->
+    <div class="modal-overlay" id="fb-modal">
+      <div class="modal" style="max-width:900px;width:96vw;max-height:88vh;display:flex;flex-direction:column;padding:0;overflow:hidden;">
+        <div class="modal-header">
+          <i class="fa-solid fa-folder-tree" style="color:var(--accent);margin-right:.5rem;font-size:.85rem;"></i>
+          <div class="modal-title" id="fb-modal-title">File Browser</div>
+          <button class="btn btn-ghost btn-sm" id="fb-refresh-btn" style="margin-left:auto;margin-right:.5rem;font-size:.75rem;" onclick="fbRefresh()" title="Refresh">
+            <i class="fa-solid fa-rotate"></i>
+          </button>
+          <button class="close-btn" onclick="closeFbModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <!-- Quick-jump root shortcuts + path input -->
+        <div class="fb-path-bar">
+          <button class="fb-root-btn" onclick="fbNav('C:\\')">C:\</button>
+          <button class="fb-root-btn" onclick="fbNav('D:\\')">D:\</button>
+          <button class="fb-root-btn" onclick="fbNavEnv('%USERPROFILE%')">Home</button>
+          <button class="fb-root-btn" onclick="fbNavEnv('%TEMP%')">Temp</button>
+          <button class="fb-root-btn" onclick="fbNavEnv('%APPDATA%')">AppData</button>
+          <button class="fb-root-btn" onclick="fbNavEnv('%SYSTEMROOT%')">Windows</button>
+          <input class="fb-path-input" id="fb-path-input" type="text" placeholder="C:\Windows\System32" spellcheck="false"
+            onkeydown="if(event.key==='Enter')fbNav(document.getElementById('fb-path-input').value.trim())" />
+          <button class="btn btn-ghost btn-sm" style="font-size:.75rem;padding:.3rem .7rem;" onclick="fbNav(document.getElementById('fb-path-input').value.trim())">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+        <!-- Breadcrumb + Up button -->
+        <div class="fb-crumb-bar">
+          <div class="fb-crumb" id="fb-crumb"></div>
+          <button class="btn btn-ghost btn-sm" style="font-size:.7rem;padding:.2rem .55rem;flex-shrink:0;" onclick="fbNavUp()" id="fb-up-btn">
+            <i class="fa-solid fa-arrow-up"></i> Up
+          </button>
+        </div>
+        <!-- File listing -->
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;min-height:0;" id="fb-table-wrap">
+          <div id="fb-init-msg" style="display:flex;align-items:center;justify-content:center;padding:3.5rem 1rem;color:#475569;font-size:.82rem;">
+            Select a root or type a path above to start browsing
+          </div>
+          <div id="fb-loading" style="display:none;padding:2.5rem;text-align:center;">
+            <div class="spinner" style="margin:0 auto 1rem;"></div>
+            <span style="color:var(--text-muted);font-size:.83rem;">Reading directory…</span>
+          </div>
+          <div id="fb-error" style="display:none;" class="fb-empty fb-err-msg"></div>
+          <table class="fb-file-table" id="fb-table" style="display:none;">
+            <thead>
+              <tr>
+                <th onclick="fbSort('name')">Name</th>
+                <th style="width:80px;text-align:right;" onclick="fbSort('size')">Size</th>
+                <th style="width:120px;" onclick="fbSort('modified')">Modified</th>
+              </tr>
+            </thead>
+            <tbody id="fb-tbody"></tbody>
+          </table>
+        </div>
+        <!-- Upload bar -->
+        <div class="fb-upload-bar" id="fb-upload-bar" style="display:none;">
+          <label style="font-size:.72rem;color:#64748b;font-weight:600;white-space:nowrap;">Upload here:</label>
+          <input type="file" id="fb-upload-input" style="font-size:.73rem;color:#94a3b8;flex:1;min-width:0;" />
+          <button class="btn btn-primary btn-sm" id="fb-upload-btn" style="font-size:.74rem;white-space:nowrap;" onclick="fbUpload()">
+            <i class="fa-solid fa-upload"></i> Send
+          </button>
+          <div class="fb-upload-status" id="fb-upload-status"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registry Browser modal -->
+    <div class="modal-overlay" id="reg-modal">
+      <div class="modal" style="max-width:920px;width:96vw;max-height:88vh;display:flex;flex-direction:column;padding:0;overflow:hidden;">
+        <div class="modal-header">
+          <i class="fa-solid fa-database" style="color:var(--accent);margin-right:.5rem;font-size:.85rem;"></i>
+          <div class="modal-title" id="reg-modal-title">Registry Browser</div>
+          <button class="close-btn" onclick="closeRegModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <!-- Hive shortcuts + path input -->
+        <div class="reg-path-bar">
+          <button class="reg-hive-btn" onclick="regNav('HKLM:')">HKLM</button>
+          <button class="reg-hive-btn" onclick="regNav('HKCU:')">HKCU</button>
+          <button class="reg-hive-btn" onclick="regNav('HKCR:')">HKCR</button>
+          <button class="reg-hive-btn" onclick="regNav('HKU:')">HKU</button>
+          <button class="reg-hive-btn" onclick="regNav('HKCC:')">HKCC</button>
+          <input class="reg-path-input" id="reg-path-input" type="text" placeholder="HKLM:\SOFTWARE\Microsoft" spellcheck="false"
+            onkeydown="if(event.key==='Enter')regNav(document.getElementById('reg-path-input').value.trim())" />
+          <button class="btn btn-ghost btn-sm" style="font-size:.75rem;padding:.3rem .7rem;" onclick="regNav(document.getElementById('reg-path-input').value.trim())">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+        <!-- Crumb + delete-key action -->
+        <div class="reg-delete-key-bar">
+          <div class="reg-crumb" id="reg-crumb"></div>
+          <button id="reg-up-btn" class="btn btn-ghost btn-sm" style="font-size:.72rem;padding:.22rem .6rem;" onclick="regNavUp()" title="Go up one level">
+            <i class="fa-solid fa-arrow-up"></i> Up
+          </button>
+          <button id="reg-del-key-btn" class="btn btn-sm" style="font-size:.72rem;padding:.22rem .6rem;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#f87171;" onclick="regDeleteKey()" title="Delete this key (admin only)">
+            <i class="fa-solid fa-trash"></i> Delete Key
+          </button>
+        </div>
+        <!-- Split body: subkeys left | values right -->
+        <div class="reg-body" id="reg-body">
+          <div class="reg-loading" id="reg-loading" style="width:100%;display:none;">
+            <div class="spinner" style="margin:0 auto 1rem;"></div>
+            <span style="color:var(--text-muted);font-size:.83rem;">Reading registry…</span>
+          </div>
+          <div id="reg-init-msg" style="width:100%;display:flex;align-items:center;justify-content:center;color:#475569;font-size:.82rem;padding:3rem 1rem;">
+            <span>Select a hive above or type a path to browse</span>
+          </div>
+          <div class="reg-keys-pane" id="reg-keys-pane" style="display:none;"></div>
+          <div class="reg-values-pane" id="reg-values-pane" style="display:none;"></div>
+        </div>
+        <!-- Add-value form -->
+        <div class="reg-add-form" id="reg-add-form" style="display:none;">
+          <div style="font-size:.72rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.15rem;">Add / Edit Value</div>
+          <div class="reg-add-row">
+            <input class="reg-name-inp" id="reg-add-name" type="text" placeholder="Value name" spellcheck="false" />
+            <select id="reg-add-type">
+              <option value="String">String (REG_SZ)</option>
+              <option value="ExpandString">ExpandString (REG_EXPAND_SZ)</option>
+              <option value="DWord">DWord (REG_DWORD)</option>
+              <option value="QWord">QWord (REG_QWORD)</option>
+              <option value="MultiString">MultiString (REG_MULTI_SZ)</option>
+              <option value="Binary">Binary (REG_BINARY)</option>
+            </select>
+            <input class="reg-data-inp" id="reg-add-data" type="text" placeholder="Value data" spellcheck="false" />
+            <button class="btn btn-primary btn-sm" style="font-size:.75rem;padding:.3rem .85rem;white-space:nowrap;" onclick="regWriteValue()">
+              <i class="fa-solid fa-floppy-disk"></i> Set
+            </button>
+          </div>
+          <div class="reg-status" id="reg-add-status"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast-wrap"></div>
+
+    <script>
+      const PAGE_SIZE = 30;
+      let allItems = [],
+        totalItems = 0,
+        currentPage = 0,
+        viewMode = "grid";
+      let me = null,
+        editingId = null,
+        searchTimer = null,
+        currentSsHistory = [],   // screenshot history for the open slideover
+        currentSsHost = "";
+      let serverVersion = null;
+
+
+      const ROLE_LABELS = { admin: "Administrator", operator: "Operator", viewer: "Viewer" };
+
+      async function init() {
+        const res = await fetch("/api/auth/me");
+        if (!res.ok) {
+          window.location.href = "/login";
+          return;
+        }
+        me = await res.json();
+        document.getElementById("username-display").textContent = me.username;
+        document.getElementById("role-display").textContent = ROLE_LABELS[me.role] || me.role;
+        if (me.role === "admin") {
+          document.getElementById("admin-nav-btn").style.display = "";
+          document.getElementById("settings-nav-btn").style.display = "";
+          // Wipe Offline Clients is admin-only — show the button only
+          // when the signed-in user is an administrator. Migrated here
+          // from the deleted /settings page.
+          const wipeBtn = document.getElementById("wipe-offline-btn");
+          if (wipeBtn) wipeBtn.style.display = "";
+        }
+        try {
+          const sv = await fetch("/api/build/status");
+          if (sv.ok) { const d = await sv.json(); serverVersion = d.version || null; }
+        } catch {}
+        await loadMachines();
+        setInterval(loadMachines, 5000);
+      }
+
+      // Wipe Offline Clients — removes every client currently marked
+      // offline from the database. Online agents are untouched. Any
+      // wiped agent that reconnects will be re-enrolled and reappear.
+      async function wipeOfflineClients() {
+        if (!confirm("Remove all offline clients from the dashboard?\n\nOnline clients are not affected. Wiped clients will reappear if they reconnect.")) return;
+        const btn = document.getElementById("wipe-offline-btn");
+        if (btn) btn.disabled = true;
+        try {
+          const res = await fetch("/api/clients/offline", {
+            method: "DELETE",
+            credentials: "include",
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            toast(data.error || "Failed to wipe offline clients", "error");
+          } else {
+            const n = Number(data.count ?? 0);
+            toast(n === 0 ? "No offline clients found" : `Removed ${n} offline client${n === 1 ? "" : "s"}`, "success");
+            await loadMachines();
+          }
+        } catch {
+          toast("Request failed", "error");
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      }
+      
+
+      async function loadMachines() {
+        const search = document.getElementById("search-input").value.trim();
+        const status = document.getElementById("status-filter").value;
+        const params = new URLSearchParams({
+          limit: PAGE_SIZE,
+          offset: currentPage * PAGE_SIZE,
+        });
+        if (search) params.set("search", search);
+        if (status) params.set("status", status);
+        try {
+          const res = await fetch("/api/clients?" + params);
+          if (!res.ok) return;
+          const data = await res.json();
+          allItems = sortItems(data.items || []);
+          totalItems = data.total || 0;
+          render();
+          updateStats();
+        } catch {}
+      }
+
+      function sortItems(items) {
+        const s = document.getElementById("sort-select").value;
+        return [...items].sort((a, b) => {
+          if (s === "host") return (a.host || "").localeCompare(b.host || "");
+          if (s === "online_first") {
+            if (a.online === b.online)
+              return (b.last_seen || 0) - (a.last_seen || 0);
+            return a.online ? -1 : 1;
+          }
+          return (b.last_seen || 0) - (a.last_seen || 0);
+        });
+      }
+
+      function updateStats() {
+        document.getElementById("stat-total").textContent = totalItems;
+        document.getElementById("stat-online").textContent = allItems.filter(
+          (c) => c.online,
+        ).length;
+        document.getElementById("stat-offline").textContent = allItems.filter(
+          (c) => !c.online,
+        ).length;
+        document.getElementById("stat-tagged").textContent = allItems.filter(
+          (c) => c.tag,
+        ).length;
+      }
+
+      function render() {
+        const grid = document.getElementById("machines-grid");
+        if (!allItems.length) {
+          grid.innerHTML = `<div class="empty-state"><i class="fa-solid fa-desktop"></i><p>No machines found. Run the agent binary on a target machine to connect.</p></div>`;
+          document.getElementById("pagination").style.display = "none";
+          return;
+        }
+        grid.innerHTML = allItems.map((c) => cardHTML(c)).join("");
+        // Pagination
+        const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+        const pag = document.getElementById("pagination");
+        if (totalPages > 1) {
+          pag.style.display = "flex";
+          document.getElementById("page-info").textContent =
+            `Page ${currentPage + 1} of ${totalPages} · ${totalItems} machines`;
+          document.getElementById("prev-btn").disabled = currentPage === 0;
+          document.getElementById("next-btn").disabled =
+            currentPage >= totalPages - 1;
+        } else {
+          pag.style.display = "none";
+        }
+      }
+
+      function cardHTML(c) {
+        const online = c.online;
+        const iconCls = osIconClass(c.os);
+        const iconFA = osIconFA(c.os);
+        const tagHtml = c.tag
+          ? `<span class="tag-chip"><i class="fa-solid fa-tag"></i>${esc(c.tag)}</span>`
+          : "";
+        const chips = [];
+        if (c.cpu)
+          chips.push(
+            `<span class="hw-chip"><i class="fa-solid fa-microchip"></i>${esc(trunc(c.cpu, 26))}</span>`,
+          );
+        if (c.ram)
+          chips.push(
+            `<span class="hw-chip"><i class="fa-solid fa-memory"></i>${esc(c.ram)}</span>`,
+          );
+        if (c.gpu)
+          chips.push(
+            `<span class="hw-chip"><i class="fa-solid fa-display"></i>${esc(trunc(c.gpu, 26))}</span>`,
+          );
+        const isAdmin = me && me.role === "admin";
+        const safeTag = esc(c.tag || "");
+        const safeNote = (c.note || "")
+          .replace(/\\/g, "\\\\")
+          .replace(/'/g, "\\'");
+
+        return `<div class="machine-card" onclick="openDetail('${esc(c.id)}')">
+          <div class="card-top">
+            <div class="machine-icon ${iconCls}">${iconFA}</div>
+            <div class="card-main">
+              <div class="card-hostname" title="${esc(c.host)}">${esc(c.host || c.id)}</div>
+              <div class="card-meta">
+                <span><span class="online-dot ${online ? "dot-online" : "dot-offline"}"></span>${online ? "Online" : "Offline"}</span>
+                ${c.username ? `<span><i class="fa-solid fa-user"></i>${esc(c.username)}</span>` : ""}
+                ${c.ip ? `<span><i class="fa-solid fa-network-wired"></i>${esc(c.ip)}</span>` : ""}
+                ${c.os ? `<span><i class="fa-solid fa-layer-group"></i>${esc(trunc(c.os, 20))}</span>` : ""}
+                ${c.last_seen ? `<span><i class="fa-solid fa-clock"></i>${timeAgo(c.last_seen)}</span>` : ""}
+              </div>
+            </div>
+            <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;">
+              <span class="badge ${online ? "badge-online" : "badge-offline"}">${online ? "Online" : "Offline"}</span>
+              ${c.persistent ? `<span class="badge badge-persist" title="${c.persistent_at ? "Persistence installed " + timeAgo(c.persistent_at) : "Persistence installed"}"><i class="fa-solid fa-shield-halved" style="font-size:.6rem"></i>Persistent</span>` : ""}
+              ${serverVersion && c.version && c.version !== serverVersion ? `<span class="badge badge-update" title="Agent v${esc(c.version)} · Server v${esc(serverVersion)}"><i class="fa-solid fa-arrow-up" style="font-size:.6rem"></i>${esc(c.version)}</span>` : ""}
+              ${tagHtml}
+            </div>
+          </div>
+          ${chips.length ? `<div class="card-hw">${chips.join("")}</div>` : ""}
+          <div class="card-actions" onclick="event.stopPropagation()">
+            <button class="btn btn-ghost btn-sm" onclick="openTagModal('${esc(c.id)}','${safeTag}','${safeNote}')">
+              <i class="fa-solid fa-tag"></i>
+            </button>
+            ${isAdmin ? `<button class="btn btn-danger btn-sm btn-icon" onclick="deleteMachine('${esc(c.id)}','${esc(c.host || c.id)}')"><i class="fa-solid fa-trash"></i></button>` : ""}
+          </div>
+        </div>`;
+      }
+
+      function compactTable(rows) {
+        const inner = rows
+          .map((r) => {
+            const label = r[0],
+              val = r[1],
+              mono = r[2] || false;
+            return (
+              `<span style="font-size:.63rem;color:rgba(157,177,204,.65);text-transform:uppercase;letter-spacing:.06em;font-weight:600;white-space:nowrap;padding:.18rem 0;">${esc(label)}</span>` +
+              `<span style="font-size:.84rem;color:#e8edf2;word-break:break-all;${mono ? "font-family:monospace;font-size:.78rem;color:#9db1cc;" : ""}" title="${esc(String(val))}">${esc(String(val))}</span>`
+            );
+          })
+          .join("");
+        return `<div style="background:rgba(14,48,98,.62);border:1px solid rgba(34,211,238,.18);border-radius:9px;padding:.55rem .85rem;display:grid;grid-template-columns:max-content 1fr;gap:.28rem .85rem;align-items:baseline;">${inner}</div>`;
+      }
+
+      async function openDetail(id) {
+        try {
+          const [res, ssRes] = await Promise.all([
+            fetch(`/api/clients/${id}`),
+            fetch(`/api/clients/${id}/screenshots`),
+          ]);
+          if (!res.ok) return;
+          const c = await res.json();
+          const ssHistory = ssRes.ok ? await ssRes.json().catch(() => []) : [];
+          const statusDot = c.online
+            ? `<span style="display:inline-flex;align-items:center;gap:.28rem;flex-shrink:0;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);border-radius:6px;padding:.18rem .48rem;"><span style="width:6px;height:6px;border-radius:50%;background:#4ade80;flex-shrink:0;box-shadow:0 0 5px rgba(34,197,94,.6);"></span><span style="font-size:.67rem;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:.04em;">Online</span></span>`
+            : `<span style="display:inline-flex;align-items:center;gap:.28rem;flex-shrink:0;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.22);border-radius:6px;padding:.18rem .48rem;"><span style="width:6px;height:6px;border-radius:50%;background:#f87171;flex-shrink:0;"></span><span style="font-size:.67rem;font-weight:700;color:#f87171;text-transform:uppercase;letter-spacing:.04em;">Offline</span></span>`;
+          const tagInHeader = c.tag
+            ? `<span class="tag-chip" style="font-size:.65rem;padding:.1rem .42rem;flex-shrink:0;"><i class="fa-solid fa-tag"></i>${esc(c.tag)}</span>`
+            : "";
+          const titleEl = document.getElementById("so-title");
+          titleEl.style.cssText +=
+            ";display:flex;align-items:center;gap:.55rem;flex-wrap:nowrap;min-width:0;";
+          titleEl.innerHTML = `<span style="flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(c.host || c.id)}</span>${statusDot}${tagInHeader}`;
+
+          currentSsHistory = ssHistory;
+          currentSsHost    = c.host || c.id;
+          const ssHistoryHTML = ssHistory.length > 0 ? `
+            <div>
+              <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
+                <span>Screenshots (${ssHistory.length})</span>
+                <span style="font-size:.63rem;color:var(--text-dim);font-weight:400;">click to view</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:.45rem;">
+                ${ssHistory.map((ss, i) => `
+                  <div onclick="showHistoryScreenshot(${i})"
+                       style="cursor:pointer;border-radius:8px;overflow:hidden;border:1px solid rgba(34,211,238,.14);background:#030c1d;transition:border-color .14s;"
+                       onmouseover="this.style.borderColor='rgba(34,211,238,.42)'" onmouseout="this.style.borderColor='rgba(34,211,238,.14)'">
+                    <img src="data:image/jpeg;base64,${ss.data}" style="width:100%;height:68px;object-fit:cover;display:block;" loading="lazy" />
+                    <div style="padding:.22rem .45rem;font-size:.63rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${new Date(ss.capturedAt*1000).toLocaleTimeString()}</div>
+                  </div>`).join("")}
+              </div>
+            </div>` : "";
+
+          document.getElementById("so-body").innerHTML = `
+            <div>
+              <div class="section-label">Identity</div>
+              ${compactTable([
+                ["HOSTNAME", c.host || "—"],
+                ["USERNAME", c.username || "—"],
+                ["IP ADDRESS", c.ip || "—"],
+                ["COUNTRY", c.country || "—"],
+                ["OS", c.os || "—"],
+                ["ARCH", c.arch || "—"],
+                ["VERSION", c.version || "—"],
+                ["BUILD TAG", c.build_tag || "—"],
+                ["BUILD ID", c.build_id || "—", true],
+                ["CLIENT ID", c.id, true],
+                ["HWID", c.hwid || "—", true],
+              ])}
+            </div>
+            <div>
+              <div class="section-label">Timestamps</div>
+              ${compactTable([
+                ["LAST SEEN", c.last_seen ? fmtTs(c.last_seen) : "—"],
+                ["FIRST SEEN", c.created_at ? fmtTs(c.created_at) : "—"],
+              ])}
+            </div>
+            ${c.note ? `<div><div class="section-label">Note</div><div class="detail-item"><div class="di-value" style="white-space:pre-wrap;">${esc(c.note)}</div></div></div>` : ""}
+            ${ssHistoryHTML}
+          `;
+
+          const safeTag = esc(c.tag || "");
+          const safeNote = (c.note || "")
+            .replace(/\\/g, "\\\\")
+            .replace(/'/g, "\\'");
+          const isAdmin = me && me.role === "admin";
+          const onAttr = c.online ? "" : "disabled";
+          document.getElementById("so-dropdown").innerHTML = `
+            <button class="so-dd-item" onclick="launchConsole('${esc(c.id)}');closeSoMenu()" ${onAttr}>
+              <i class="fa-solid fa-terminal so-dd-icon" style="color:#34d399"></i>Open Console
+            </button>
+            <button class="so-dd-item" onclick="window.open('/remote/${esc(c.id)}','_blank');closeSoMenu()" ${onAttr}>
+              <i class="fa-solid fa-desktop so-dd-icon" style="color:#a78bfa"></i>Remote Desktop
+            </button>
+            <button class="so-dd-item" onclick="captureScreenshot('${esc(c.id)}','${esc(c.host || c.id)}');closeSoMenu()" ${onAttr}>
+              <i class="fa-solid fa-camera so-dd-icon" style="color:#38bdf8"></i>Screenshot
+            </button>
+            <button class="so-dd-item" onclick="openFtModal('${esc(c.id)}','${esc(c.host || c.id)}');closeSoMenu()" ${onAttr}>
+              <i class="fa-solid fa-folder-open so-dd-icon" style="color:#fbbf24"></i>File Transfer
+            </button>
+            <button class="so-dd-item" onclick="openProcModal('${esc(c.id)}','${esc(c.host || c.id)}');closeSoMenu()" ${onAttr}>
+              <i class="fa-solid fa-microchip so-dd-icon" style="color:#a78bfa"></i>Process Manager
+            </button>
+            <button class="so-dd-item" onclick="openFbModal('${esc(c.id)}','${esc(c.host || c.id)}');closeSoMenu()" ${onAttr}>
+              <i class="fa-solid fa-folder-tree so-dd-icon" style="color:#34d399"></i>File Browser
+            </button>
+            <button class="so-dd-item" onclick="openRegModal('${esc(c.id)}','${esc(c.host || c.id)}');closeSoMenu()" ${onAttr}>
+              <i class="fa-solid fa-database so-dd-icon" style="color:#fb923c"></i>Registry Browser
+            </button>
+            <div class="so-dd-divider"></div>
+            <button class="so-dd-item" onclick="reconnectClient('${esc(c.id)}');closeSoMenu()" ${onAttr}>
+              <i class="fa-solid fa-rotate so-dd-icon" style="color:#94a3b8"></i>Reconnect
+            </button>
+            <button class="so-dd-item" onclick="disconnectClient('${esc(c.id)}');closeSoMenu()" ${onAttr}>
+              <i class="fa-solid fa-plug-circle-xmark so-dd-icon" style="color:#f87171"></i>Disconnect
+            </button>
+            <div class="so-dd-divider"></div>
+            <button class="so-dd-item" onclick="sendAgentAction('${esc(c.id)}','persist_install');closeSoMenu()" ${onAttr}>
+              <i class="fa-solid fa-shield-halved so-dd-icon" style="color:#34d399"></i>Install Persistence
+            </button>
+            <button class="so-dd-item" onclick="sendAgentAction('${esc(c.id)}','persist_remove');closeSoMenu()" ${onAttr}>
+              <i class="fa-solid fa-shield-slash so-dd-icon" style="color:#fbbf24"></i>Remove Persistence
+            </button>
+            <button class="so-dd-item danger" onclick="confirmUninstall('${esc(c.id)}','${esc(c.host || c.id)}');closeSoMenu()" ${onAttr}>
+              <i class="fa-solid fa-trash-can so-dd-icon" style="color:#f87171"></i>Uninstall Agent
+            </button>
+            <div class="so-dd-divider"></div>
+            <button class="so-dd-item" onclick="openTagModal('${esc(c.id)}','${safeTag}','${safeNote}');closeSoMenu()">
+              <i class="fa-solid fa-tag so-dd-icon" style="color:#94a3b8"></i>Label
+            </button>
+            <button class="so-dd-item" onclick="clearSsHistory('${esc(c.id)}');closeSoMenu()">
+              <i class="fa-solid fa-images so-dd-icon" style="color:#94a3b8"></i>Clear Screenshots
+            </button>
+            ${isAdmin ? `<button class="so-dd-item danger" onclick="deleteMachine('${esc(c.id)}','${esc(c.host || c.id)}');closeSoMenu()"><i class="fa-solid fa-user-xmark so-dd-icon" style="color:#fca5a5"></i>Delete</button>` : ""}
+          `;
+          document.getElementById("detail-so").classList.add("open");
+        } catch {}
+      }
+
+      function di(label, val, mono = false) {
+        return `<div class="detail-item">
+          <div class="di-label">${esc(label)}</div>
+          <div class="di-value${mono ? " mono" : ""}" title="${esc(val)}">${esc(val)}</div>
+        </div>`;
+      }
+
+      function closeDetail() {
+        document.getElementById("detail-so").classList.remove("open");
+        closeSoMenu();
+      }
+
+      function toggleSoMenu(e) {
+        e.stopPropagation();
+        document.getElementById("so-cmds-wrap").classList.toggle("open");
+      }
+      function closeSoMenu() {
+        document.getElementById("so-cmds-wrap").classList.remove("open");
+      }
+      document.addEventListener("click", (e) => {
+        const wrap = document.getElementById("so-cmds-wrap");
+        if (wrap && !wrap.contains(e.target)) closeSoMenu();
+      });
+
+      async function sendClientCmd(id, action) {
+        try {
+          const res = await fetch(`/api/clients/${id}/command`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action }),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            if (data.offline) toast("Client is offline", "error");
+            else toast(data.error || "Command failed", "error");
+            return false;
+          }
+          return true;
+        } catch {
+          toast("Failed to send command", "error");
+          return false;
+        }
+      }
+
+      async function reconnectClient(id) {
+        const ok = await sendClientCmd(id, "reconnect");
+        if (ok) toast("Reconnect signal sent");
+      }
+      async function disconnectClient(id) {
+        if (!confirm(`Disconnect agent ${id}?\nThis will close its connection.`)) return;
+        const ok = await sendClientCmd(id, "disconnect");
+        if (ok) { toast("Disconnected"); setTimeout(loadMachines, 1200); }
+      }
+
+      async function sendAgentAction(id, action) {
+        try {
+          const res = await fetch(`/api/clients/${encodeURIComponent(id)}/agent-action`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ action }),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            if (data.offline) toast("Client is offline", "error");
+            else toast(data.error || `Action '${action}' failed`, "error");
+            return false;
+          }
+          if (!data.ok) {
+            toast(data.error || `Action '${action}' failed`, "error");
+            return false;
+          }
+          const labels = { persist_install: "Persistence installed", persist_remove: "Persistence removed", uninstall: "Agent uninstalled" };
+          toast(labels[action] || "Action completed");
+          if (action === "uninstall") setTimeout(loadMachines, 5000);
+          return true;
+        } catch {
+          toast(`Failed to send action: ${action}`, "error");
+          return false;
+        }
+      }
+
+      async function confirmUninstall(id, host) {
+        if (!confirm(`Uninstall agent on ${host || id}?\n\nThis will remove persistence and schedule the agent EXE for self-deletion. The machine will disappear from the dashboard shortly after.`)) return;
+        await sendAgentAction(id, "uninstall");
+      }
+
+      function launchConsole(id) {
+        window.open(`/${encodeURIComponent(id)}/console`, "_blank");
+      }
+
+      async function captureScreenshot(id, host) {
+        const overlay = document.getElementById("ss-modal");
+        const titleEl = document.getElementById("ss-modal-title");
+        const metaEl  = document.getElementById("ss-modal-meta");
+        const bodyEl  = document.getElementById("ss-modal-body");
+        const dlBtn   = document.getElementById("ss-download-btn");
+
+        titleEl.textContent = host || id;
+        metaEl.textContent = "";
+        dlBtn.style.display = "none";
+        bodyEl.innerHTML = `<div class="ss-spinner"><div class="spinner"></div><span>Requesting screen capture…</span></div>`;
+        overlay.classList.add("open");
+
+        try {
+          const res = await fetch(`/api/clients/${encodeURIComponent(id)}/screenshot`, {
+            method: "POST",
+            credentials: "include",
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.ok) {
+            bodyEl.innerHTML = `<div class="ss-error"><i class="fa-solid fa-triangle-exclamation" style="font-size:1.4rem;display:block;margin-bottom:.5rem;"></i>${esc(data.error || "Screenshot failed")}</div>`;
+            return;
+          }
+          const src = `data:image/jpeg;base64,${data.data}`;
+          const ts = data.capturedAt ? new Date(data.capturedAt * 1000).toLocaleTimeString() : "";
+          metaEl.textContent = ts ? `Captured at ${ts}` : "";
+          bodyEl.innerHTML = `<img src="${src}" alt="Screenshot of ${esc(host || id)}" />`;
+          dlBtn.href = src;
+          dlBtn.download = `screenshot-${(host || id).replace(/[^a-z0-9]/gi, "_")}-${Date.now()}.jpg`;
+          dlBtn.style.display = "";
+          // Refresh the history strip in the slideover (if it's open for this client)
+          refreshSsHistoryStrip(id);
+        } catch {
+          bodyEl.innerHTML = `<div class="ss-error"><i class="fa-solid fa-triangle-exclamation" style="font-size:1.4rem;display:block;margin-bottom:.5rem;"></i>Request failed</div>`;
+        }
+      }
+
+      function closeSsModal(e) {
+        if (e && e.target !== document.getElementById("ss-modal")) return;
+        document.getElementById("ss-modal").classList.remove("open");
+      }
+
+      async function refreshSsHistoryStrip(clientId) {
+        try {
+          const res = await fetch(`/api/clients/${encodeURIComponent(clientId)}/screenshots`);
+          if (!res.ok) return;
+          const history = await res.json();
+          currentSsHistory = history;
+          // Re-render only the screenshots section if the slideover is open for this client
+          const soBody = document.getElementById("so-body");
+          if (!soBody) return;
+          let stripEl = document.getElementById("ss-history-strip");
+          if (!history.length) { if (stripEl) stripEl.remove(); return; }
+          const stripHTML = `
+            <div id="ss-history-strip">
+              <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
+                <span>Screenshots (${history.length})</span>
+                <span style="font-size:.63rem;color:var(--text-dim);font-weight:400;">click to view</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:.45rem;">
+                ${history.map((ss, i) => `
+                  <div onclick="showHistoryScreenshot(${i})"
+                       style="cursor:pointer;border-radius:8px;overflow:hidden;border:1px solid rgba(34,211,238,.14);background:#030c1d;transition:border-color .14s;"
+                       onmouseover="this.style.borderColor='rgba(34,211,238,.42)'" onmouseout="this.style.borderColor='rgba(34,211,238,.14)'">
+                    <img src="data:image/jpeg;base64,${ss.data}" style="width:100%;height:68px;object-fit:cover;display:block;" loading="lazy" />
+                    <div style="padding:.22rem .45rem;font-size:.63rem;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${new Date(ss.capturedAt*1000).toLocaleTimeString()}</div>
+                  </div>`).join("")}
+              </div>
+            </div>`;
+          if (stripEl) {
+            stripEl.outerHTML = stripHTML;
+          } else {
+            soBody.insertAdjacentHTML("beforeend", stripHTML);
+          }
+        } catch {}
+      }
+
+      function showHistoryScreenshot(idx) {
+        const ss = currentSsHistory[idx];
+        if (!ss) return;
+        const overlay = document.getElementById("ss-modal");
+        const titleEl = document.getElementById("ss-modal-title");
+        const metaEl  = document.getElementById("ss-modal-meta");
+        const bodyEl  = document.getElementById("ss-modal-body");
+        const dlBtn   = document.getElementById("ss-download-btn");
+        titleEl.textContent = currentSsHost;
+        const ts = ss.capturedAt ? new Date(ss.capturedAt * 1000).toLocaleString() : "";
+        metaEl.textContent = ts ? `Captured at ${ts}` : "";
+        const src = `data:image/${ss.format || "jpeg"};base64,${ss.data}`;
+        bodyEl.innerHTML = `<img src="${src}" alt="Screenshot of ${esc(currentSsHost)}" />`;
+        dlBtn.href = src;
+        dlBtn.download = `screenshot-${currentSsHost.replace(/[^a-z0-9]/gi, "_")}-${ss.capturedAt || Date.now()}.jpg`;
+        dlBtn.style.display = "";
+        overlay.classList.add("open");
+      }
+
+      function openTagModal(id, tag, note) {
+        editingId = id;
+        document.getElementById("tag-input").value = tag || "";
+        document.getElementById("note-input").value = note || "";
+        document.getElementById("tag-modal").classList.add("open");
+        setTimeout(() => document.getElementById("tag-input").focus(), 80);
+      }
+      function closeTagModal() {
+        document.getElementById("tag-modal").classList.remove("open");
+        editingId = null;
+      }
+
+      async function saveTag() {
+        if (!editingId) return;
+        const tag = document.getElementById("tag-input").value.trim();
+        const note = document.getElementById("note-input").value.trim();
+        try {
+          const res = await fetch(`/api/clients/${editingId}/tag`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tag, note }),
+          });
+          if (!res.ok) throw new Error();
+          toast("Label saved", "success");
+          closeTagModal();
+          await loadMachines();
+        } catch {
+          toast("Failed to save", "error");
+        }
+      }
+
+      async function deleteMachine(id, name) {
+        if (
+          !confirm(
+            `Delete machine "${name}"?\nThis removes it permanently from the database.`,
+          )
+        )
+          return;
+        try {
+          const res = await fetch(`/api/clients/${id}`, { method: "DELETE" });
+          if (!res.ok) throw new Error();
+          toast("Machine deleted", "success");
+          closeDetail();
+          await loadMachines();
+        } catch {
+          toast("Failed to delete", "error");
+        }
+      }
+
+      function setView(mode) {
+        viewMode = mode;
+        document
+          .getElementById("machines-grid")
+          .classList.toggle("list-view", mode === "list");
+        document
+          .getElementById("view-grid")
+          .classList.toggle("active", mode === "grid");
+        document
+          .getElementById("view-list")
+          .classList.toggle("active", mode === "list");
+      }
+
+      function onSearch() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+          currentPage = 0;
+          loadMachines();
+        }, 320);
+      }
+      function onFilterChange() {
+        currentPage = 0;
+        loadMachines();
+      }
+      function changePage(d) {
+        const tp = Math.ceil(totalItems / PAGE_SIZE);
+        currentPage = Math.max(0, Math.min(currentPage + d, tp - 1));
+        loadMachines();
+      }
+
+      function toggleNav() {
+        const panel = document.getElementById("nav-panel");
+        panel.classList.toggle("open");
+        if (panel.classList.contains("open")) {
+          window.addEventListener("scroll", () => panel.classList.remove("open"), { once: true, passive: true });
+        }
+      }
+      function closeNav() {
+        document.getElementById("nav-panel").classList.remove("open");
+      }
+
+      let _bellUnread = 0;
+      function applyBellState(active) {
+        const btn = document.getElementById("bell-btn");
+        if (!btn) return;
+        if (active) { btn.classList.add("bell-active"); btn.title = "Notifications on — click to mute"; }
+        else { btn.classList.remove("bell-active"); btn.title = "Notifications off — click to enable"; }
+      }
+      function toggleBell() {
+        const active = localStorage.getItem("nubyone_notifications_enabled") !== "false";
+        const next = !active;
+        localStorage.setItem("nubyone_notifications_enabled", next ? "true" : "false");
+        applyBellState(next);
+      }
+      function updateBadge(n) {
+        _bellUnread = n;
+        const badge = document.getElementById("bell-badge");
+        if (badge) { badge.textContent = n > 99 ? "99+" : String(n); badge.style.display = n > 0 ? "" : "none"; }
+      }
+      async function loadBellCount() {
+        try {
+          const data = await fetch("/api/notifications?limit=50").then(r => r.json());
+          updateBadge(Array.isArray(data) ? data.filter(n => !n.read).length : 0);
+        } catch {}
+      }
+      function showAgentToast(event, host) {
+        if (!document.getElementById("_agentToastCss")) {
+          const s = document.createElement("style"); s.id = "_agentToastCss";
+          s.textContent = "@keyframes _agIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}";
+          document.head.appendChild(s);
+        }
+        let wrap = document.getElementById("_agentToastWrap");
+        if (!wrap) {
+          wrap = document.createElement("div"); wrap.id = "_agentToastWrap";
+          wrap.style.cssText = "position:fixed;bottom:1.2rem;right:1.2rem;z-index:10000;display:flex;flex-direction:column;gap:.35rem;align-items:flex-end;pointer-events:none;";
+          document.body.appendChild(wrap);
+        }
+        const online = event === "connect";
+        const h = (host||"agent").length > 22 ? (host||"agent").slice(0,20)+"…" : (host||"agent");
+        const el = document.createElement("div");
+        el.style.cssText = "display:inline-flex;align-items:center;gap:.4rem;padding:.28rem .65rem;border-radius:99px;font-size:.71rem;font-weight:600;font-family:inherit;background:#0a1628;border:1px solid " + (online ? "rgba(34,197,94,.45)" : "rgba(100,116,139,.3)") + ";color:" + (online ? "#4ade80" : "#94a3b8") + ";box-shadow:0 4px 20px rgba(0,0,0,.5);animation:_agIn .18s ease;white-space:nowrap;";
+        el.innerHTML = '<i class="fa-solid ' + (online ? "fa-circle-dot" : "fa-circle-xmark") + '" style="font-size:.6rem;"></i>' + (online ? "Online" : "Offline") + ": <b style='font-weight:700'>" + h + "</b>";
+        wrap.appendChild(el);
+        setTimeout(() => { el.style.transition = "opacity .2s,transform .2s"; el.style.opacity = "0"; el.style.transform = "translateX(8px)"; setTimeout(() => el.remove(), 220); }, 2500);
+      }
+      function initNotifWs() {
+        const proto = location.protocol === "https:" ? "wss:" : "ws:";
+        const ws = new WebSocket(`${proto}//${location.host}/api/notifications/ws`);
+        ws.onmessage = (e) => { try { const msg = JSON.parse(e.data); if (msg.type === "client_event") { updateBadge(_bellUnread + 1); showAgentToast(msg.event, msg.host); } } catch {} };
+        ws.onclose = () => setTimeout(initNotifWs, 3000);
+      }
+
+      async function logout() {
+        await fetch("/api/auth/logout", { method: "POST" });
+        window.location.href = "/login";
+      }
+
+      function toast(msg, type = "success") {
+        const el = document.createElement("div");
+        el.className = `toast ${type}`;
+        el.innerHTML = `<i class="fa-solid ${type === "success" ? "fa-check-circle" : "fa-circle-exclamation"}"></i><span>${esc(msg)}</span>`;
+        document.getElementById("toast-wrap").appendChild(el);
+        setTimeout(() => el.remove(), 3000);
+      }
+
+      function osIconClass(os) {
+        const s = (os || "").toLowerCase();
+        if (s.includes("win")) return "icon-windows";
+        if (s.includes("darwin") || s.includes("mac")) return "icon-darwin";
+        if (s.includes("linux") || s.includes("ubuntu") || s.includes("debian"))
+          return "icon-linux";
+        return "icon-generic";
+      }
+      function osIconFA(os) {
+        const s = (os || "").toLowerCase();
+        if (s.includes("win")) return '<i class="fa-brands fa-windows"></i>';
+        if (s.includes("darwin") || s.includes("mac"))
+          return '<i class="fa-brands fa-apple"></i>';
+        if (s.includes("linux") || s.includes("ubuntu") || s.includes("debian"))
+          return '<i class="fa-brands fa-linux"></i>';
+        return '<i class="fa-solid fa-server"></i>';
+      }
+      function trunc(s, n) {
+        return !s ? "" : s.length > n ? s.slice(0, n) + "…" : s;
+      }
+      function esc(s) {
+        return String(s || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+      function timeAgo(ts) {
+        const d = Math.floor(Date.now() / 1000) - ts;
+        if (d < 60) return "just now";
+        if (d < 3600) return `${Math.floor(d / 60)}m ago`;
+        if (d < 86400) return `${Math.floor(d / 3600)}h ago`;
+        return `${Math.floor(d / 86400)}d ago`;
+      }
+      function fmtTs(ts) {
+        return new Date(ts * 1000).toLocaleString();
+      }
+
+      // ── File Transfer ────────────────────────────────────────────────
+      let ftClientId = null, ftClientHost = "";
+
+      function openFtModal(id, host) {
+        ftClientId = id;
+        ftClientHost = host || id;
+        document.getElementById("ft-modal-title").textContent = "File Transfer — " + ftClientHost;
+        document.getElementById("ft-push-status").innerHTML = "";
+        document.getElementById("ft-pull-status").innerHTML = "";
+        document.getElementById("ft-dest-path").value = "";
+        document.getElementById("ft-src-path").value = "";
+        document.getElementById("ft-file-input").value = "";
+        switchFtTab("push");
+        document.getElementById("ft-modal").classList.add("open");
+      }
+      function closeFtModal() {
+        document.getElementById("ft-modal").classList.remove("open");
+        ftClientId = null;
+      }
+      function switchFtTab(tab) {
+        document.getElementById("ft-push-pane").style.display = tab === "push" ? "" : "none";
+        document.getElementById("ft-pull-pane").style.display = tab === "pull" ? "" : "none";
+        document.getElementById("ft-tab-push").classList.toggle("active", tab === "push");
+        document.getElementById("ft-tab-pull").classList.toggle("active", tab === "pull");
+      }
+      async function doFilePush() {
+        if (!ftClientId) return;
+        const fileInput = document.getElementById("ft-file-input");
+        const destPath  = document.getElementById("ft-dest-path").value.trim();
+        const statusEl  = document.getElementById("ft-push-status");
+        const btn       = document.getElementById("ft-push-btn");
+
+        if (!fileInput.files || !fileInput.files[0]) {
+          statusEl.innerHTML = '<span class="ft-status-err">Please select a file.</span>';
+          return;
+        }
+        if (!destPath) {
+          statusEl.innerHTML = '<span class="ft-status-err">Destination path is required.</span>';
+          return;
+        }
+
+        btn.disabled = true;
+        statusEl.innerHTML = '<span style="color:var(--text-muted);font-size:.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Uploading…</span>';
+
+        try {
+          const fd = new FormData();
+          fd.append("file", fileInput.files[0]);
+          fd.append("path", destPath);
+          const res  = await fetch(`/api/clients/${encodeURIComponent(ftClientId)}/file/push`, {
+            method: "POST", credentials: "include", body: fd,
+          });
+          const data = await res.json().catch(() => ({}));
+          if (data.ok) {
+            statusEl.innerHTML = '<span class="ft-status-ok"><i class="fa-solid fa-check"></i> Uploaded successfully.</span>';
+          } else {
+            statusEl.innerHTML = `<span class="ft-status-err"><i class="fa-solid fa-triangle-exclamation"></i> ${esc(data.error || "Upload failed")}</span>`;
+          }
+        } catch {
+          statusEl.innerHTML = '<span class="ft-status-err">Network error</span>';
+        } finally {
+          btn.disabled = false;
+        }
+      }
+      async function doFilePull() {
+        if (!ftClientId) return;
+        const srcPath = document.getElementById("ft-src-path").value.trim();
+        const statusEl = document.getElementById("ft-pull-status");
+        const btn      = document.getElementById("ft-pull-btn");
+
+        if (!srcPath) {
+          statusEl.innerHTML = '<span class="ft-status-err">File path is required.</span>';
+          return;
+        }
+
+        btn.disabled = true;
+        statusEl.innerHTML = '<span style="color:var(--text-muted);font-size:.8rem;"><i class="fa-solid fa-spinner fa-spin"></i> Downloading from agent…</span>';
+
+        try {
+          const res = await fetch(`/api/clients/${encodeURIComponent(ftClientId)}/file/pull`, {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ path: srcPath }),
+          });
+          if (!res.ok) {
+            const data = await res.json().catch(() => ({}));
+            statusEl.innerHTML = `<span class="ft-status-err"><i class="fa-solid fa-triangle-exclamation"></i> ${esc(data.error || "Download failed")}</span>`;
+            return;
+          }
+          // Trigger browser download
+          const blob = await res.blob();
+          const cd   = res.headers.get("Content-Disposition") || "";
+          const nameMatch = cd.match(/filename\*?=(?:UTF-8'')?["']?([^"';\r\n]+)/i);
+          const filename = nameMatch ? decodeURIComponent(nameMatch[1]) : srcPath.split(/[\\/]/).pop() || "file";
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(a.href);
+          statusEl.innerHTML = `<span class="ft-status-ok"><i class="fa-solid fa-check"></i> Downloaded <strong>${esc(filename)}</strong></span>`;
+        } catch {
+          statusEl.innerHTML = '<span class="ft-status-err">Network error</span>';
+        } finally {
+          btn.disabled = false;
+        }
+      }
+
+      // ── Process Manager ──────────────────────────────────────────────
+      let procClientId = null;
+      let procList = [];
+      let procSortKey = "name", procSortAsc = true;
+
+      function openProcModal(id, host) {
+        procClientId = id;
+        document.getElementById("proc-modal-title").textContent = "Process Manager — " + (host || id);
+        document.getElementById("proc-modal").classList.add("open");
+        loadProcs();
+      }
+      function closeProcModal() {
+        document.getElementById("proc-modal").classList.remove("open");
+        procClientId = null;
+        procList = [];
+      }
+      async function loadProcs() {
+        if (!procClientId) return;
+        const loadEl   = document.getElementById("proc-loading");
+        const tableWrap = document.getElementById("proc-table-wrap");
+        const errorEl  = document.getElementById("proc-error");
+        const btn      = document.getElementById("proc-refresh-btn");
+
+        loadEl.style.display = "";
+        tableWrap.style.display = "none";
+        errorEl.style.display = "none";
+        btn.disabled = true;
+
+        try {
+          const res  = await fetch(`/api/clients/${encodeURIComponent(procClientId)}/processes`, { credentials: "include" });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.ok) {
+            throw new Error(data.error || "Failed to load processes");
+          }
+          procList = data.procs || [];
+          renderProcTable();
+          loadEl.style.display = "none";
+          tableWrap.style.display = "";
+        } catch (e) {
+          loadEl.style.display = "none";
+          document.getElementById("proc-error-msg").textContent = String(e.message || e);
+          errorEl.style.display = "";
+        } finally {
+          btn.disabled = false;
+        }
+      }
+      function sortProcs(key) {
+        if (procSortKey === key) procSortAsc = !procSortAsc;
+        else { procSortKey = key; procSortAsc = key !== "mem"; }
+        renderProcTable();
+      }
+      function fmtMem(bytes) {
+        if (!bytes) return "—";
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + " KB";
+        return (bytes / 1024 / 1024).toFixed(1) + " MB";
+      }
+      function renderProcTable() {
+        const sorted = [...procList].sort((a, b) => {
+          let va = a[procSortKey] ?? 0, vb = b[procSortKey] ?? 0;
+          if (typeof va === "string") va = va.toLowerCase();
+          if (typeof vb === "string") vb = vb.toLowerCase();
+          return procSortAsc ? (va < vb ? -1 : va > vb ? 1 : 0) : (va > vb ? -1 : va < vb ? 1 : 0);
+        });
+        const tbody = document.getElementById("proc-tbody");
+        tbody.innerHTML = sorted.map(p => `
+          <tr>
+            <td style="color:var(--text-muted);font-variant-numeric:tabular-nums;">${p.pid}</td>
+            <td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;" title="${esc(p.name)}">${esc(p.name)}</td>
+            <td style="color:var(--text-muted);">${esc(p.user || "")}</td>
+            <td class="proc-mem">${fmtMem(p.mem)}</td>
+            <td style="text-align:center;">
+              <button class="proc-kill-btn" onclick="killProc(${p.pid})" title="Kill PID ${p.pid}">
+                <i class="fa-solid fa-xmark"></i> Kill
+              </button>
+            </td>
+          </tr>
+        `).join("");
+      }
+      // ── File Browser ─────────────────────────────────────────────
+      let fbClientId = null, fbClientHost = "", fbCurrentPath = "";
+      let fbItems = [], fbSortKey = "name", fbSortAsc = true;
+
+      function openFbModal(id, host) {
+        fbClientId = id;
+        fbClientHost = host || id;
+        fbCurrentPath = "";
+        fbItems = [];
+        document.getElementById("fb-modal-title").textContent = "Files — " + fbClientHost;
+        document.getElementById("fb-path-input").value = "";
+        document.getElementById("fb-crumb").innerHTML = "";
+        document.getElementById("fb-init-msg").style.display = "flex";
+        document.getElementById("fb-loading").style.display = "none";
+        document.getElementById("fb-error").style.display = "none";
+        document.getElementById("fb-table").style.display = "none";
+        document.getElementById("fb-upload-bar").style.display = "none";
+        document.getElementById("fb-upload-status").innerHTML = "";
+        document.getElementById("fb-modal").classList.add("open");
+      }
+
+      function closeFbModal() {
+        document.getElementById("fb-modal").classList.remove("open");
+        fbClientId = null; fbCurrentPath = ""; fbItems = [];
+      }
+
+      function fbRefresh() { if (fbCurrentPath) fbNav(fbCurrentPath); }
+
+      function fbNavEnv(envVar) {
+        if (!fbClientId) return;
+        // Pass the env var string directly — the server-side PowerShell will
+        // call Get-ChildItem -LiteralPath, which expands %VAR% paths natively.
+        fbNav(envVar);
+      }
+
+      async function fbNav(path) {
+        if (!fbClientId || !path) return;
+        fbCurrentPath = path.trim();
+        document.getElementById("fb-path-input").value = fbCurrentPath;
+        document.getElementById("fb-init-msg").style.display = "none";
+        document.getElementById("fb-loading").style.display = "";
+        document.getElementById("fb-error").style.display = "none";
+        document.getElementById("fb-table").style.display = "none";
+        document.getElementById("fb-upload-bar").style.display = "none";
+        document.getElementById("fb-refresh-btn").disabled = true;
+        try {
+          const res = await fetch(
+            `/api/clients/${encodeURIComponent(fbClientId)}/fs?path=${encodeURIComponent(fbCurrentPath)}`,
+            { credentials: "include" }
+          );
+          const data = await res.json().catch(() => ({ ok: false, error: "Unparseable response" }));
+          document.getElementById("fb-loading").style.display = "none";
+          if (!data.ok) {
+            document.getElementById("fb-error").textContent = data.error || "Failed to read directory";
+            document.getElementById("fb-error").style.display = "";
+            return;
+          }
+          // Update resolved path (PowerShell may have expanded env vars)
+          if (data.path) {
+            fbCurrentPath = data.path;
+            document.getElementById("fb-path-input").value = fbCurrentPath;
+          }
+          fbItems = data.items || [];
+          fbSortKey = "name"; fbSortAsc = true;
+          fbRenderCrumb();
+          fbRenderTable();
+          document.getElementById("fb-table").style.display = "";
+          document.getElementById("fb-upload-bar").style.display = "";
+          document.getElementById("fb-upload-status").innerHTML = "";
+        } catch (e) {
+          document.getElementById("fb-loading").style.display = "none";
+          document.getElementById("fb-error").textContent = "Network error: " + String(e?.message || e);
+          document.getElementById("fb-error").style.display = "";
+        } finally {
+          document.getElementById("fb-refresh-btn").disabled = false;
+        }
+      }
+
+      function fbNavUp() {
+        if (!fbCurrentPath) return;
+        const sep = fbCurrentPath.includes("\\") ? "\\" : "/";
+        const parts = fbCurrentPath.replace(/[/\\]+$/, "").split(/[/\\]/);
+        if (parts.length <= 1) return;
+        parts.pop();
+        fbNav(parts.join(sep) || sep);
+      }
+
+      function fbRenderCrumb() {
+        const sep = fbCurrentPath.includes("\\") ? "\\" : "/";
+        const parts = fbCurrentPath.replace(/[/\\]+$/, "").split(/[/\\]/);
+        const el = document.getElementById("fb-crumb");
+        el.innerHTML = parts.map((p, i) => {
+          const target = parts.slice(0, i + 1).join(sep) || sep;
+          const label = i === 0 && p.endsWith(":") ? p + "\\" : (p || sep);
+          const isLast = i === parts.length - 1;
+          return `<span onclick="fbNav(${JSON.stringify(target)})" style="color:${isLast?"#94a3b8":"#475569"}">${esc(label)}</span>`;
+        }).join(`<span style="color:#334155;margin:0 .15rem;">${sep}</span>`);
+      }
+
+      function fbSort(key) {
+        if (fbSortKey === key) fbSortAsc = !fbSortAsc;
+        else { fbSortKey = key; fbSortAsc = key !== "size"; }
+        fbRenderTable();
+      }
+
+      function fbFmtSize(bytes) {
+        if (bytes == null) return "—";
+        if (bytes === 0) return "0 B";
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + " KB";
+        if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + " MB";
+        return (bytes / 1024 / 1024 / 1024).toFixed(2) + " GB";
+      }
+
+      function fbFmtDate(iso) {
+        if (!iso) return "—";
+        try { return new Date(iso).toLocaleString(undefined, { dateStyle:"short", timeStyle:"short" }); }
+        catch { return iso; }
+      }
+
+      function fbRenderTable() {
+        const canWrite = me && (me.role === "admin" || me.role === "operator");
+        const sep = fbCurrentPath.includes("\\") ? "\\" : "/";
+        const base = fbCurrentPath.replace(/[/\\]+$/, "");
+
+        const sorted = [...fbItems].sort((a, b) => {
+          if (a.isDir !== b.isDir) return a.isDir ? -1 : 1;
+          let va = a[fbSortKey], vb = b[fbSortKey];
+          if (fbSortKey === "name") { va = (va||"").toLowerCase(); vb = (vb||"").toLowerCase(); }
+          if (fbSortKey === "size") { va = va || -1; vb = vb || -1; }
+          const cmp = va < vb ? -1 : va > vb ? 1 : 0;
+          return fbSortAsc ? cmp : -cmp;
+        });
+
+        const tbody = document.getElementById("fb-tbody");
+        if (!sorted.length) {
+          tbody.innerHTML = `<tr><td colspan="3" style="text-align:center;padding:2rem;color:#475569;">(empty directory)</td></tr>`;
+          return;
+        }
+        tbody.innerHTML = sorted.map(item => {
+          const fullPath = base + sep + item.name;
+          const icon = item.isDir
+            ? `<i class="fa-solid fa-folder fb-dir-icon"></i>`
+            : `<i class="fa-solid fa-file fb-file-icon"></i>`;
+          const dlBtn = !item.isDir
+            ? `<button class="fb-act-btn" title="Download" onclick="event.stopPropagation();fbDownload(${JSON.stringify(fullPath)},${JSON.stringify(item.name)})"><i class="fa-solid fa-download"></i></button>`
+            : "";
+          const delBtn = canWrite
+            ? `<button class="fb-act-btn danger" title="Delete" onclick="event.stopPropagation();fbDelete(${JSON.stringify(fullPath)},${JSON.stringify(item.name)},${item.isDir})"><i class="fa-solid fa-trash"></i></button>`
+            : "";
+          const rowClass = item.isDir ? `fb-dir-row` : "";
+          const rowClick = item.isDir ? ` onclick="fbNav(this.dataset.path)"` : "";
+          const dataPath = ` data-path="${esc(fullPath)}"`;
+          return `<tr class="${rowClass}"${dataPath}${rowClick}>
+            <td class="fb-name" title="${esc(item.name)}">${icon}${esc(item.name)}<span class="fb-row-actions">${dlBtn}${delBtn}</span></td>
+            <td style="text-align:right;width:80px;" class="fb-size">${fbFmtSize(item.size)}</td>
+            <td class="fb-mtime" style="width:120px;">${fbFmtDate(item.modified)}</td>
+          </tr>`;
+        }).join("");
+      }
+
+      async function fbDownload(path, name) {
+        try {
+          const res = await fetch(`/api/clients/${encodeURIComponent(fbClientId)}/file/pull`, {
+            method: "POST", credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ path }),
+          });
+          if (!res.ok) {
+            const d = await res.json().catch(() => ({}));
+            toast(d.error || "Download failed", "error"); return;
+          }
+          const blob = await res.blob();
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = name || "file";
+          a.click();
+          URL.revokeObjectURL(a.href);
+        } catch { toast("Download failed", "error"); }
+      }
+
+      async function fbDelete(path, name, isDir) {
+        const label = isDir ? `folder "${name}" and all its contents` : `file "${name}"`;
+        if (!confirm(`Delete ${label}?\nThis cannot be undone.`)) return;
+        try {
+          const res = await fetch(
+            `/api/clients/${encodeURIComponent(fbClientId)}/fs?path=${encodeURIComponent(path)}`,
+            { method: "DELETE", credentials: "include" }
+          );
+          const d = await res.json().catch(() => ({}));
+          if (d.ok) { toast("Deleted", "success"); fbItems = fbItems.filter(i => i.name !== name); fbRenderTable(); }
+          else toast(d.error || "Delete failed", "error");
+        } catch { toast("Network error", "error"); }
+      }
+
+      async function fbUpload() {
+        if (!fbClientId || !fbCurrentPath) return;
+        const fileInput = document.getElementById("fb-upload-input");
+        const statusEl  = document.getElementById("fb-upload-status");
+        const btn       = document.getElementById("fb-upload-btn");
+        if (!fileInput.files || !fileInput.files[0]) {
+          statusEl.innerHTML = '<span class="fb-err-msg">Select a file first.</span>'; return;
+        }
+        const file = fileInput.files[0];
+        const sep = fbCurrentPath.includes("\\") ? "\\" : "/";
+        const destPath = fbCurrentPath.replace(/[/\\]+$/, "") + sep + file.name;
+        btn.disabled = true;
+        statusEl.innerHTML = `<span style="color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Uploading <strong>${esc(file.name)}</strong>…</span>`;
+        try {
+          const fd = new FormData();
+          fd.append("file", file);
+          fd.append("path", destPath);
+          const res = await fetch(`/api/clients/${encodeURIComponent(fbClientId)}/file/push`, {
+            method: "POST", credentials: "include", body: fd,
+          });
+          const d = await res.json().catch(() => ({}));
+          if (d.ok) {
+            statusEl.innerHTML = `<span class="fb-ok-msg"><i class="fa-solid fa-check"></i> Uploaded.</span>`;
+            fileInput.value = "";
+            setTimeout(() => { statusEl.innerHTML = ""; }, 2500);
+            fbNav(fbCurrentPath);
+          } else {
+            statusEl.innerHTML = `<span class="fb-err-msg"><i class="fa-solid fa-triangle-exclamation"></i> ${esc(d.error || "Upload failed")}</span>`;
+          }
+        } catch {
+          statusEl.innerHTML = '<span class="fb-err-msg">Network error</span>';
+        } finally { btn.disabled = false; }
+      }
+
+      // ── Clear Screenshot History ──────────────────────────────────
+      async function clearSsHistory(id) {
+        if (!confirm("Clear all stored screenshots for this machine?\nThis cannot be undone.")) return;
+        try {
+          const res = await fetch(`/api/clients/${encodeURIComponent(id)}/screenshots`, {
+            method: "DELETE", credentials: "include",
+          });
+          if (!res.ok) throw new Error();
+          toast("Screenshot history cleared", "success");
+          currentSsHistory = [];
+          const stripEl = document.getElementById("ss-history-strip");
+          if (stripEl) stripEl.remove();
+          const soBody = document.getElementById("so-body");
+          if (soBody) {
+            const oldStrip = soBody.querySelector("[id='ss-history-strip']");
+            if (oldStrip) oldStrip.remove();
+          }
+        } catch {
+          toast("Failed to clear screenshots", "error");
+        }
+      }
+
+      // ── Registry Browser ─────────────────────────────────────────
+      let regClientId = null, regClientHost = "", regCurrentPath = "";
+
+      function openRegModal(id, host) {
+        regClientId = id;
+        regClientHost = host || id;
+        regCurrentPath = "";
+        document.getElementById("reg-modal-title").textContent = "Registry — " + regClientHost;
+        document.getElementById("reg-path-input").value = "";
+        document.getElementById("reg-crumb").innerHTML = "";
+        document.getElementById("reg-loading").style.display = "none";
+        document.getElementById("reg-init-msg").style.display = "flex";
+        document.getElementById("reg-keys-pane").style.display = "none";
+        document.getElementById("reg-values-pane").style.display = "none";
+        document.getElementById("reg-add-form").style.display = "none";
+        document.getElementById("reg-add-status").textContent = "";
+        const isAdmin = me && me.role === "admin";
+        document.getElementById("reg-del-key-btn").style.display = isAdmin ? "" : "none";
+        document.getElementById("reg-modal").classList.add("open");
+      }
+
+      function closeRegModal() {
+        document.getElementById("reg-modal").classList.remove("open");
+        regClientId = null;
+        regCurrentPath = "";
+      }
+
+      function regSetLoading(on) {
+        document.getElementById("reg-loading").style.display = on ? "flex" : "none";
+        document.getElementById("reg-init-msg").style.display = "none";
+        document.getElementById("reg-keys-pane").style.display = on ? "none" : "";
+        document.getElementById("reg-values-pane").style.display = on ? "none" : "";
+      }
+
+      async function regNav(path) {
+        if (!regClientId || !path) return;
+        // Normalise: ensure backslash separator, handle bare hive names
+        let p = path.trim().replace(/\//g, "\\");
+        // If user typed just a hive abbreviation like "HKLM" without colon, fix it
+        const hiveMap = { HKLM: "HKLM:", HKCU: "HKCU:", HKCR: "HKCR:", HKU: "HKU:", HKCC: "HKCC:" };
+        const upper = p.toUpperCase();
+        for (const [k, v] of Object.entries(hiveMap)) {
+          if (upper === k || upper === k + ":") { p = v; break; }
+          if (upper.startsWith(k + "\\")) { p = v + "\\" + p.slice(k.length + (p[k.length] === "\\" ? 1 : 0)); break; }
+          if (upper.startsWith(k + ":\\")) { p = v + "\\" + p.slice(k.length + 2); break; }
+        }
+        regCurrentPath = p;
+        document.getElementById("reg-path-input").value = p;
+        regSetLoading(true);
+        try {
+          const res = await fetch(
+            `/api/clients/${encodeURIComponent(regClientId)}/registry?path=${encodeURIComponent(p)}`,
+            { credentials: "include" }
+          );
+          const data = await res.json().catch(() => ({ ok: false, error: "Unparseable response" }));
+          regSetLoading(false);
+          if (!data.ok) {
+            document.getElementById("reg-keys-pane").style.display = "none";
+            document.getElementById("reg-values-pane").innerHTML = `<div class="reg-empty reg-err-msg"><i class="fa-solid fa-triangle-exclamation" style="display:block;font-size:1.2rem;margin-bottom:.5rem;"></i>${esc(data.error || "Failed to read key")}</div>`;
+            document.getElementById("reg-values-pane").style.display = "";
+            document.getElementById("reg-add-form").style.display = "none";
+            regUpdateCrumb(p);
+            return;
+          }
+          regRenderKeys(p, data.subkeys || []);
+          regRenderValues(data.values || []);
+          document.getElementById("reg-add-form").style.display = "";
+          document.getElementById("reg-add-name").value = "";
+          document.getElementById("reg-add-data").value = "";
+          document.getElementById("reg-add-status").textContent = "";
+          regUpdateCrumb(p);
+        } catch (e) {
+          regSetLoading(false);
+          document.getElementById("reg-values-pane").innerHTML = `<div class="reg-empty reg-err-msg">Network error: ${esc(String(e?.message || e))}</div>`;
+          document.getElementById("reg-values-pane").style.display = "";
+          document.getElementById("reg-keys-pane").style.display = "none";
+          document.getElementById("reg-add-form").style.display = "none";
+        }
+      }
+
+      function regNavUp() {
+        if (!regCurrentPath) return;
+        const parts = regCurrentPath.replace(/\\+$/, "").split("\\");
+        if (parts.length <= 1) return;
+        parts.pop();
+        regNav(parts.join("\\"));
+      }
+
+      function regUpdateCrumb(path) {
+        const parts = path.replace(/\\+$/, "").split("\\");
+        const el = document.getElementById("reg-crumb");
+        el.innerHTML = parts.map((p, i) => {
+          const clickPath = parts.slice(0, i + 1).join("\\");
+          return `<span onclick="regNav(${JSON.stringify(clickPath)})" style="cursor:pointer;color:${i===parts.length-1?"#94a3b8":"#475569"};transition:color .1s;" onmouseover="this.style.color='#67e8f9'" onmouseout="this.style.color='${i===parts.length-1?"#94a3b8":"#475569"}';">${esc(p)}</span>`;
+        }).join('<span style="color:#334155;margin:0 .18rem;">\\</span>');
+      }
+
+      function regRenderKeys(currentPath, subkeys) {
+        const pane = document.getElementById("reg-keys-pane");
+        const upParts = currentPath.replace(/\\+$/, "").split("\\");
+        const canGoUp = upParts.length > 1;
+        let html = "";
+        if (canGoUp) {
+          html += `<div class="reg-key-item reg-key-up" onclick="regNavUp()"><i class="fa-solid fa-arrow-turn-up"></i>..</div>`;
+        }
+        if (!subkeys.length && !canGoUp) {
+          html = `<div style="padding:.75rem .85rem;font-size:.72rem;color:#475569;">(no subkeys)</div>`;
+        } else {
+          html += subkeys.map(k => {
+            const childPath = currentPath.replace(/\\+$/, "") + "\\" + k;
+            return `<div class="reg-key-item" onclick="regNav(${JSON.stringify(childPath)})" title="${esc(k)}"><i class="fa-solid fa-folder"></i>${esc(k)}</div>`;
+          }).join("");
+        }
+        pane.innerHTML = html;
+        pane.style.display = "";
+      }
+
+      function regRenderValues(values) {
+        const pane = document.getElementById("reg-values-pane");
+        const isAdmin = me && me.role === "admin";
+        const canWrite = me && (me.role === "admin" || me.role === "operator");
+        if (!values.length) {
+          pane.innerHTML = `<div class="reg-empty" style="color:#475569;">(no values at this key)</div>`;
+          pane.style.display = "";
+          return;
+        }
+        const rows = values.map(v => {
+          const dispName = v.name === "" ? "<Default>" : esc(v.name);
+          const editBtn = canWrite ? `<button class="reg-action-btn" title="Edit value" onclick="regPrefillEdit(${JSON.stringify(v.name)},${JSON.stringify(v.data)},${JSON.stringify(v.type)})"><i class="fa-solid fa-pen-to-square"></i></button>` : "";
+          const delBtn  = canWrite ? `<button class="reg-action-btn danger" title="Delete value" onclick="regDeleteValue(${JSON.stringify(v.name)})"><i class="fa-solid fa-trash"></i></button>` : "";
+          return `<tr>
+            <td style="max-width:180px;" title="${v.name === "" ? "(Default)" : esc(v.name)}">${dispName}</td>
+            <td><span class="reg-type-badge">${esc(v.type)}</span></td>
+            <td class="mono" title="${esc(v.data)}" style="max-width:260px;">${esc(v.data)}</td>
+            <td style="white-space:nowrap;text-align:right;">${editBtn}${delBtn}</td>
+          </tr>`;
+        }).join("");
+        pane.innerHTML = `<table class="reg-val-table">
+          <thead><tr><th style="width:180px;">Name</th><th style="width:120px;">Type</th><th>Data</th><th style="width:60px;"></th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+        pane.style.display = "";
+      }
+
+      function regPrefillEdit(name, data, type) {
+        document.getElementById("reg-add-name").value = name;
+        document.getElementById("reg-add-data").value = data;
+        const sel = document.getElementById("reg-add-type");
+        for (const opt of sel.options) { if (opt.value === type) { sel.value = type; break; } }
+        document.getElementById("reg-add-name").focus();
+        document.getElementById("reg-add-form").scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+
+      async function regWriteValue() {
+        if (!regClientId || !regCurrentPath) return;
+        const name = document.getElementById("reg-add-name").value;
+        const data = document.getElementById("reg-add-data").value;
+        const type = document.getElementById("reg-add-type").value;
+        const statusEl = document.getElementById("reg-add-status");
+        statusEl.innerHTML = `<span style="color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Writing…</span>`;
+        try {
+          const res = await fetch(`/api/clients/${encodeURIComponent(regClientId)}/registry/value`, {
+            method: "POST", credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ path: regCurrentPath, name, data, type }),
+          });
+          const d = await res.json().catch(() => ({}));
+          if (d.ok) {
+            statusEl.innerHTML = `<span class="reg-ok-msg"><i class="fa-solid fa-check"></i> Value set.</span>`;
+            setTimeout(() => { statusEl.textContent = ""; }, 2500);
+            regNav(regCurrentPath);
+          } else {
+            statusEl.innerHTML = `<span class="reg-err-msg"><i class="fa-solid fa-triangle-exclamation"></i> ${esc(d.error || "Failed")}</span>`;
+          }
+        } catch {
+          statusEl.innerHTML = `<span class="reg-err-msg">Network error</span>`;
+        }
+      }
+
+      async function regDeleteValue(name) {
+        if (!regClientId || !regCurrentPath) return;
+        const dispName = name === "" ? "(Default)" : name;
+        if (!confirm(`Delete registry value "${dispName}"?`)) return;
+        try {
+          const res = await fetch(`/api/clients/${encodeURIComponent(regClientId)}/registry/value`, {
+            method: "DELETE", credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ path: regCurrentPath, name }),
+          });
+          const d = await res.json().catch(() => ({}));
+          if (d.ok) { toast("Value deleted", "success"); regNav(regCurrentPath); }
+          else toast(d.error || "Delete failed", "error");
+        } catch { toast("Network error", "error"); }
+      }
+
+      async function regDeleteKey() {
+        if (!regClientId || !regCurrentPath) return;
+        if (!confirm(`Recursively delete registry key:\n${regCurrentPath}\n\nThis cannot be undone.`)) return;
+        try {
+          const res = await fetch(`/api/clients/${encodeURIComponent(regClientId)}/registry/key`, {
+            method: "DELETE", credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ path: regCurrentPath }),
+          });
+          const d = await res.json().catch(() => ({}));
+          if (d.ok) {
+            toast("Key deleted", "success");
+            regNavUp();
+          } else {
+            toast(d.error || "Delete key failed", "error");
+          }
+        } catch { toast("Network error", "error"); }
+      }
+
+      async function killProc(pid) {
+        if (!procClientId) return;
+        if (!confirm(`Kill process PID ${pid}?\nThis sends an immediate termination signal.`)) return;
+
+        const rows = document.querySelectorAll(`#proc-tbody .proc-kill-btn`);
+        rows.forEach(b => b.disabled = true);
+
+        try {
+          const res  = await fetch(`/api/clients/${encodeURIComponent(procClientId)}/processes/${pid}/kill`, {
+            method: "POST", credentials: "include",
+          });
+          const data = await res.json().catch(() => ({}));
+          if (data.ok) {
+            toast(`Killed PID ${pid}`);
+            // Remove the row immediately for fast feedback; refresh updates the list
+            procList = procList.filter(p => p.pid !== pid);
+            renderProcTable();
+          } else {
+            toast(data.error || "Kill failed", "error");
+            rows.forEach(b => b.disabled = false);
+          }
+        } catch {
+          toast("Network error", "error");
+          rows.forEach(b => b.disabled = false);
+        }
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          document.getElementById("ss-modal").classList.remove("open");
+          document.getElementById("ft-modal").classList.remove("open");
+          document.getElementById("proc-modal").classList.remove("open");
+          closeFbModal();
+          closeRegModal();
+          closeDetail();
+          closeTagModal();
+          closeNav();
+        }
+      });
+
+      init();
+      applyBellState(localStorage.getItem("nubyone_notifications_enabled") !== "false");
+      loadBellCount();
+      initNotifWs();
+    </script>
+    <script src="/assets/notif-drawer.js"></script>
+  </body>
+</html>

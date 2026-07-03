@@ -1,0 +1,10 @@
+node_modules/
+builds/
+data/*.db
+data/*.db-shm
+data/*.db-wal
+data/server-keypair.json
+data/notification-config.json
+data/notification-user-settings.json
+.env
+dist/

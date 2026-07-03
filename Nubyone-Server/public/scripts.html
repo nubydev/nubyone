@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>𝗡𝘂𝗯𝘆𝗢𝗻𝗲 – Scripts</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        color-scheme: dark;
+        --bg: #0c2645;
+        --border: rgba(34,211,238,.18);
+        --border-sub: rgba(255,255,255,.07);
+        --accent: #22d3ee;
+        --accent-soft: rgba(34,211,238,.2);
+        --text: #eef5ff;
+        --text-muted: #93c5e8;
+        --text-dim: #3d6085;
+        --card-bg: rgba(14,48,98,.58);
+        --card-hover: rgba(14,100,200,.28);
+        --border-hover: rgba(34,211,238,.6);
+      }
+      html, body { color: var(--text); min-height: 100vh; }
+      ::-webkit-scrollbar { width: 4px; height: 4px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: rgba(34,211,238,.5); border-radius: 99px; }
+      ::-webkit-scrollbar-thumb:hover { background: rgba(34,211,238,.75); }
+      * { scrollbar-width: thin; scrollbar-color: rgba(34,211,238,.5) transparent; }
+      body {
+        display: flex; flex-direction: column;
+        background:
+          radial-gradient(ellipse 80% 60% at 15% 10%, rgba(14,165,233,.42) 0%, transparent 55%),
+          radial-gradient(ellipse 70% 55% at 85% 80%, rgba(34,211,238,.35) 0%, transparent 55%),
+          #0c2645;
+        background-attachment: fixed;
+      }
+
+      /* ── App header + nav ────────────────────────────────────── */
+      .app-header { position: sticky; top: 0; z-index: 50; background: rgba(10,30,62,.90); border-bottom: 1px solid rgba(34,211,238,.18); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); flex-shrink: 0; }
+      .header-brand-row { display: flex; align-items: center; justify-content: space-between; padding: .7rem 1.25rem; }
+      .header-brand { display: flex; align-items: center; gap: .25rem; text-decoration: none; }
+      .header-name { font-size: 1rem; font-weight: 700; color: #f0fffe; letter-spacing: -.01em; }
+      .menu-toggle { display: none; align-items: center; gap: .45rem; background: rgba(6,100,180,.15); border: 1px solid rgba(34,211,238,.28); color: #7dd8f0; border-radius: 10px; padding: .45rem .9rem; font-size: .85rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: background .15s; }
+      .menu-toggle:hover { background: rgba(6,100,180,.25); }
+      .nav-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 49; }
+      .nav-overlay.open { display: block; }
+      .nav-panel { border-top: 1px solid rgba(255,255,255,.05); padding: .55rem 1.25rem .65rem; display: flex; flex-direction: column; gap: .45rem; }
+      .nav-buttons-row { display: flex; flex-wrap: wrap; gap: .42rem; }
+      .nav-btn { display: inline-flex; align-items: center; gap: .5rem; padding: .52rem 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); color: #9db1cc; font-size: .855rem; font-weight: 500; text-decoration: none; cursor: pointer; transition: all .15s; white-space: nowrap; font-family: inherit; }
+      .nav-btn:hover { background: rgba(6,120,180,.18); border-color: rgba(34,211,238,.35); color: #c0e8ff; transform: translateY(-1px); }
+      .nav-btn.active { background: rgba(14,100,200,.3); border-color: rgba(34,211,238,.65); color: #38d6f0; box-shadow: 0 0 0 1px rgba(34,211,238,.18); }
+      .nav-btn i { font-size: .82rem; }
+      .nav-user-row { display: flex; align-items: center; justify-content: center; gap: .65rem; padding-top: .45rem; border-top: 1px solid rgba(255,255,255,.05); }
+      .bell-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); color: #93c5e8; cursor: pointer; transition: all .15s; font-size: .9rem; }
+      .bell-btn:hover { background: rgba(34,211,238,.12); border-color: rgba(34,211,238,.35); color: #22d3ee; }
+      .bell-btn.bell-active { background: rgba(34,211,238,.15); border-color: rgba(34,211,238,.6); color: #22d3ee; box-shadow: 0 0 0 2px rgba(34,211,238,.15); }
+      .bell-badge { position: absolute; top: -5px; right: -5px; min-width: 16px; height: 16px; border-radius: 99px; background: #ef4444; color: #fff; font-size: .6rem; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 3px; line-height: 1; pointer-events: none; }
+      .nav-user-pill { display: flex; align-items: center; gap: .5rem; background: rgba(4,20,50,.6); border: 1px solid rgba(34,211,238,.16); border-radius: 99px; padding: .32rem .85rem .32rem .65rem; }
+      .nav-user-pill i { color: #7dd8f0; font-size: .78rem; }
+      .nav-username { font-size: .83rem; font-weight: 600; color: #e0f8f8; }
+      .nav-role-badge { font-size: .68rem; font-weight: 700; text-transform: capitalize; background: rgba(138,43,226,.22); border: 1px solid rgba(138,43,226,.38); color: #c084fc; border-radius: 99px; padding: .13rem .52rem; }
+      .logout-btn { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.2); color: #fca5a5; cursor: pointer; transition: all .15s; font-size: .9rem; font-family: inherit; }
+      .logout-btn:hover { background: rgba(239,68,68,.2); border-color: rgba(239,68,68,.5); }
+      @keyframes logo-bounce { 0%,100%{transform:translateY(3px)} 50%{transform:translateY(-3px)} }
+      .logo-bounce { animation: logo-bounce 2.2s ease-in-out infinite; display: inline-flex; align-items: center; }
+      .logo-img-sm { width:30px; height:30px; object-fit:contain; border-radius:7px; flex-shrink:0; }
+
+      @media (min-width: 769px) {
+        .app-header { display: flex; flex-direction: row; align-items: center; padding: 0 1.25rem; }
+        .header-brand-row { padding: .55rem 0; padding-right: 1rem; flex-shrink: 0; }
+        .nav-panel { flex: 1; flex-direction: row; align-items: center; border-top: none; padding: 0; gap: .45rem; }
+        .nav-buttons-row { flex: 1; flex-wrap: nowrap; gap: .3rem; }
+        .nav-user-row { padding-top: 0; border-top: none; flex-wrap: nowrap; }
+      }
+      @media (max-width: 768px) {
+        .menu-toggle { display: inline-flex; }
+        .nav-panel { display: none; }
+        .nav-panel.open { display: flex; }
+        .nav-user-row { flex-wrap: nowrap; }
+        .nav-user-pill { justify-self: center; }
+      }
+
+      /* ── Main ──────────────────────────────────────────────── */
+      .main { flex: 1; padding: 1.75rem 1.5rem; min-width: 0; width: 100%; max-width: 1400px; margin: 0 auto; }
+      .page-header { margin-bottom: 1.6rem; }
+      .page-title { font-size: 1.35rem; font-weight: 700; color: #f8fbff; letter-spacing: -.02em; }
+      .page-sub { color: var(--text-muted); font-size: .855rem; margin-top: .22rem; }
+
+      /* ── Cards ─────────────────────────────────────────────── */
+      .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 1.2rem 1.35rem; }
+      .card-title { font-size: 1rem; font-weight: 700; color: #e8edf2; margin-bottom: 1rem; display: flex; align-items: center; gap: .55rem; }
+      .card-title i { color: var(--accent); font-size: .9rem; }
+
+      /* ── Grid layout ───────────────────────────────────────── */
+      .grid { display: grid; gap: 1rem; }
+      .grid-full { grid-column: 1 / -1; }
+      @media (min-width: 900px) {
+        .grid { grid-template-columns: 1fr 1fr 1fr; }
+        .col-2 { grid-column: span 2; }
+        .col-3 { grid-column: span 3; }
+      }
+
+      /* ── Inputs / selects ──────────────────────────────────── */
+      .fld { margin-bottom: .8rem; }
+      .fld:last-child { margin-bottom: 0; }
+      .fld label { display: block; font-size: .78rem; color: var(--text-muted); margin-bottom: .38rem; font-weight: 500; }
+      input[type="text"], input[type="search"], select, textarea {
+        width: 100%; padding: .58rem .85rem; border-radius: 9px; border: 1px solid var(--border);
+        background: rgba(255,255,255,.04); color: var(--text); font-size: .855rem; font-family: inherit;
+        outline: none; transition: border-color .14s; resize: vertical;
+      }
+      input[type="text"]:focus, input[type="search"]:focus, select:focus, textarea:focus {
+        border-color: var(--accent);
+      }
+      input::placeholder, textarea::placeholder { color: var(--text-dim); }
+      select option { background: #0a2828; }
+
+      /* ── Buttons ───────────────────────────────────────────── */
+      .btn { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; padding: .55rem 1.1rem; border-radius: 9px; border: none; font-size: .855rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s; }
+      .btn:disabled { opacity: .45; cursor: not-allowed; }
+      .btn-accent { background: var(--accent); color: #fff; }
+      .btn-accent:not(:disabled):hover { background: #06a0c4; }
+      .btn-ghost { background: rgba(255,255,255,.06); border: 1px solid var(--border-sub); color: var(--text-muted); }
+      .btn-ghost:hover { background: rgba(255,255,255,.1); color: var(--text); }
+      .btn-danger { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.22); color: #fca5a5; }
+      .btn-danger:hover { background: rgba(239,68,68,.2); }
+      .btn-sm { padding: .3rem .7rem; font-size: .78rem; border-radius: 7px; }
+      .btn-icon { padding: .55rem .75rem; }
+
+      /* ── Mode toggle ───────────────────────────────────────── */
+      .mode-toggle { display: flex; gap: .35rem; background: rgba(0,0,0,.2); border: 1px solid var(--border); border-radius: 11px; padding: .3rem; }
+      .mode-btn { flex: 1; padding: .48rem .8rem; border-radius: 8px; border: none; background: transparent; color: var(--text-muted); font-size: .83rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; gap: .4rem; }
+      .mode-btn.active { background: var(--accent); color: #fff; }
+      .mode-btn:not(.active):hover { background: rgba(255,255,255,.07); color: var(--text); }
+
+      /* ── Client list ───────────────────────────────────────── */
+      .client-list-wrap { max-height: 260px; overflow-y: auto; border: 1px solid var(--border); border-radius: 9px; background: rgba(0,0,0,.2); }
+      .client-row { display: flex; align-items: center; gap: .75rem; padding: .65rem 1rem; border-bottom: 1px solid rgba(255,255,255,.04); cursor: pointer; transition: background .12s; }
+      .client-row:last-child { border-bottom: none; }
+      .client-row:hover { background: rgba(6,100,180,.1); }
+      .client-row input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--accent); flex-shrink: 0; cursor: pointer; }
+      .client-info { flex: 1; min-width: 0; }
+      .client-name { font-weight: 600; font-size: .875rem; color: var(--text); truncate; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .client-meta { font-size: .77rem; color: var(--text-muted); margin-top: .08rem; }
+      .online-dot { color: #34d399; font-size: .7rem; }
+
+      /* ── Script editor ─────────────────────────────────────── */
+      .script-textarea { font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace; font-size: .83rem; min-height: 22rem; background: rgba(0,0,0,.3); border-color: rgba(34,211,238,.18); resize: vertical; }
+
+      /* ── Output area ───────────────────────────────────────── */
+      .output-area { font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", "Consolas", monospace; font-size: .82rem; min-height: 10rem; max-height: 22rem; overflow-y: auto; padding: .85rem 1rem; border-radius: 9px; border: 1px solid rgba(34,211,238,.18); background: rgba(0,0,0,.35); white-space: pre-wrap; word-break: break-word; color: var(--text); }
+      .out-header { color: #34d399; font-weight: 700; margin-bottom: .3rem; }
+      .out-error { color: #f87171; }
+      .out-divider { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: .75rem 0; }
+      .out-dim { color: var(--text-dim); }
+
+      /* ── Saved script items ────────────────────────────────── */
+      .item-row { display: flex; align-items: flex-start; justify-content: space-between; gap: .6rem; padding: .6rem .85rem; border-radius: 9px; border: 1px solid var(--border-sub); background: rgba(255,255,255,.025); margin-bottom: .45rem; }
+      .item-row:last-child { margin-bottom: 0; }
+      .item-name { font-weight: 600; font-size: .855rem; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .item-meta { font-size: .75rem; color: var(--text-muted); margin-top: .1rem; }
+      .item-actions { display: flex; align-items: center; gap: .4rem; flex-shrink: 0; }
+
+      /* ── Template palette ──────────────────────────────────── */
+      .tpl-category { margin-bottom: .9rem; }
+      .tpl-category-label { display: flex; align-items: center; gap: .45rem; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text-dim); margin-bottom: .4rem; cursor: pointer; user-select: none; }
+      .tpl-category-label i { font-size: .8rem; transition: transform .2s; }
+      .tpl-category-label.collapsed i.fa-chevron-down { transform: rotate(-90deg); }
+      .tpl-items { display: flex; flex-direction: column; gap: .3rem; }
+      .tpl-item { padding: .5rem .75rem; border-radius: 8px; border: 1px solid var(--border-sub); background: rgba(255,255,255,.025); cursor: pointer; transition: all .15s; }
+      .tpl-item:hover { background: rgba(6,100,180,.15); border-color: rgba(34,211,238,.35); }
+      .tpl-item-name { font-size: .83rem; font-weight: 600; color: var(--text); }
+      .tpl-item-desc { font-size: .74rem; color: var(--text-muted); margin-top: .05rem; }
+      .tpl-badge { display: inline-block; font-size: .65rem; padding: .1rem .38rem; border-radius: 5px; margin-left: .35rem; font-weight: 700; vertical-align: middle; }
+
+      /* ── Search row ────────────────────────────────────────── */
+      .search-row { display: flex; gap: .5rem; margin-bottom: .7rem; }
+      .search-row .search-wrap { flex: 1; position: relative; }
+      .search-row .search-wrap i { position: absolute; left: .75rem; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: .8rem; pointer-events: none; }
+      .search-row input { padding-left: 2rem; }
+
+      /* ── Empty states ──────────────────────────────────────── */
+      .empty-state { text-align: center; padding: 1.5rem; color: var(--text-dim); font-size: .855rem; }
+
+      /* ── Hide template palette scrollbar ───────────────────── */
+      #template-palette::-webkit-scrollbar { display: none; }
+
+      /* ── Mobile layout fixes ───────────────────────────────── */
+      @media (max-width: 768px) {
+        /* Prevent grid item content from overflowing card bounds */
+        .grid > * { min-width: 0; overflow: hidden; }
+
+        /* Reduce page padding on small screens */
+        .main { padding: 1rem .75rem; }
+
+        /* Card action rows: allow wrapping so buttons don't overflow */
+        .card > div:first-child { flex-wrap: wrap; }
+
+        /* Script editor toolbar: stack type/timeout/buttons */
+        #code-editor-section > div:first-child > div:last-child {
+          flex-wrap: wrap;
+          gap: .35rem;
+        }
+
+        /* Client selector top bar: allow wrapping */
+        #client-list + .search-row,
+        .search-row { flex-wrap: wrap; }
+        .search-row select { flex: 1 1 90px; }
+        .search-row .search-wrap { flex: 1 1 120px; }
+
+        /* Autorun panel inner row: stack vertically */
+        #autorun-panel > div:last-child { flex-direction: column; align-items: stretch; }
+        #autorun-panel .btn { width: 100%; justify-content: center; }
+
+        /* Reduce textarea min-height for smaller screens */
+        .script-textarea { min-height: 14rem; }
+
+        /* Output area: reduce min-height */
+        .output-area { min-height: 7rem; }
+
+        /* Right sidebar: ensure full width */
+        .grid > div[style*="flex-direction:column"] { min-width: 0; }
+
+        /* Mode toggle: full width */
+        .mode-toggle { width: 100%; }
+
+        /* Client row: prevent truncation issues */
+        .client-name { max-width: calc(100vw - 7rem); }
+
+        /* Item row actions: don't shrink below content */
+        .item-actions { flex-shrink: 0; }
+        .item-row { flex-wrap: nowrap; }
+        .item-row > div:first-child { min-width: 0; }
+
+        /* Template search: full width */
+        #template-search { width: 100% !important; margin-top: .3rem; }
+        .card > div:first-child { align-items: flex-start; }
+      }
+    </style>
+      <script src="/assets/branding.js"></script>
+  </head>
+  <body>
+    <div class="nav-overlay" id="nav-overlay" onclick="toggleNav()"></div>
+    <header class="app-header">
+      <div class="header-brand-row">
+        <a href="/clients" class="header-brand">
+          <span class="logo-bounce"><img src="/assets/logo.png" alt="𝗡𝘂𝗯𝘆𝗢𝗻𝗲" class="logo-img-sm" /></span>
+          <span class="header-name">𝗡𝘂𝗯𝘆𝗢𝗻𝗲</span>
+        </a>
+        <button class="menu-toggle" onclick="toggleNav()" aria-label="Menu">
+          <i class="fa-solid fa-bars"></i> Menu
+        </button>
+      </div>
+      <div class="nav-panel" id="nav-panel">
+        <div class="nav-buttons-row">
+          <a href="/clients" class="nav-btn"><i class="fa-solid fa-desktop"></i> Clients</a>
+          <a href="/build" class="nav-btn"><i class="fa-solid fa-hammer"></i> Builder</a>
+          <a href="/scripts" class="nav-btn active"><i class="fa-solid fa-code"></i> Scripts</a>
+          <a href="/users" class="nav-btn" id="admin-nav-btn" style="display:none"><i class="fa-solid fa-users"></i> Users</a>
+          <a href="/settings" class="nav-btn" id="settings-nav-btn" style="display:none"><i class="fa-solid fa-gear"></i> Settings</a>
+        </div>
+        <div class="nav-user-row">
+          <button class="bell-btn" id="bell-btn" onclick="openNotifDrawer()" title="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="bell-badge" id="bell-badge" style="display:none"></span>
+          </button>
+          <div class="nav-user-pill">
+            <i class="fa-solid fa-user"></i>
+            <span class="nav-username" id="username-display">Loading…</span>
+            <span class="nav-role-badge" id="role-display">—</span>
+          </div>
+          <button class="logout-btn" onclick="logout()" title="Sign out">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="page-header">
+        <div class="page-title"><i class="fa-solid fa-code" style="color:var(--accent);margin-right:.45rem;font-size:1.1rem;"></i>Script Execution</div>
+        <div class="page-sub">Run scripts on one or more online clients. Results appear below.</div>
+      </div>
+
+      <div class="grid">
+
+        <!-- Client selector (full width) -->
+        <div class="col-3 card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
+            <div class="card-title" style="margin-bottom:0;"><i class="fa-solid fa-desktop"></i> Select Target Clients</div>
+            <div style="display:flex;align-items:center;gap:.6rem;">
+              <span id="selected-count" style="font-size:.82rem;color:var(--text-muted);">0 selected</span>
+              <button id="clear-selection-btn" class="btn btn-ghost btn-sm"><i class="fa-solid fa-xmark"></i> Clear</button>
+            </div>
+          </div>
+          <div class="search-row">
+            <div class="search-wrap">
+              <i class="fa-solid fa-search"></i>
+              <input id="client-search" type="search" placeholder="Search by hostname, ID, or OS…" />
+            </div>
+            <select id="os-filter" style="width:auto;min-width:130px;">
+              <option value="all">All OS</option>
+            </select>
+            <button id="select-all-btn" class="btn btn-ghost btn-sm" style="white-space:nowrap;"><i class="fa-solid fa-check-double"></i> All</button>
+          </div>
+          <div class="client-list-wrap" id="client-list">
+            <div class="empty-state">Loading clients…</div>
+          </div>
+        </div>
+
+        <!-- Mode toggle (full width) -->
+        <div class="col-3">
+          <div class="mode-toggle">
+            <button id="mode-toggle-code" class="mode-btn active"><i class="fa-solid fa-code"></i> Code Editor</button>
+            <button id="mode-toggle-visual" class="mode-btn"><i class="fa-solid fa-puzzle-piece"></i> Visual Builder</button>
+          </div>
+        </div>
+
+        <!-- Visual builder placeholder -->
+        <div id="visual-builder-section" class="col-3 card" style="display:none;">
+          <div id="visual-builder-container">
+            <div class="empty-state"><i class="fa-solid fa-puzzle-piece" style="font-size:1.5rem;margin-bottom:.5rem;display:block;"></i>Visual builder coming soon</div>
+          </div>
+        </div>
+
+        <!-- Script editor (2 cols) -->
+        <div id="code-editor-section" class="col-2 card" style="display:flex;flex-direction:column;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem;">
+            <div class="card-title" style="margin-bottom:0;"><i class="fa-solid fa-file-code"></i> Script Editor</div>
+            <div style="display:flex;align-items:center;gap:.5rem;">
+              <select id="script-type" style="width:auto;">
+                <option value="powershell">PowerShell</option>
+                <option value="bash">Bash</option>
+                <option value="cmd">CMD</option>
+                <option value="python">Python</option>
+                <option value="sh">Shell (sh)</option>
+              </select>
+              <div style="display:flex;align-items:center;gap:.3rem;background:rgba(4,20,50,.7);border:1px solid rgba(34,211,238,.18);border-radius:10px;padding:.28rem .6rem;" title="Execution timeout in seconds (5–600)">
+                <i class="fa-solid fa-clock" style="font-size:.72rem;color:var(--text-muted);"></i>
+                <input id="exec-timeout" type="number" min="5" max="600" value="60"
+                  style="width:52px;background:transparent;border:none;color:var(--text);font-size:.82rem;text-align:center;padding:0;outline:none;"
+                  title="Timeout (seconds)" />
+                <span style="font-size:.72rem;color:var(--text-muted);">s</span>
+              </div>
+              <button id="execute-btn" class="btn btn-accent" disabled>
+                <i class="fa-solid fa-play"></i> Execute
+              </button>
+              <button id="autorun-set-btn" class="btn btn-ghost btn-icon" title="Set as auto-run script"><i class="fa-solid fa-bolt"></i></button>
+            </div>
+          </div>
+          <textarea id="script-editor" class="script-textarea" placeholder="Enter your script here…"></textarea>
+          <div id="autorun-panel" style="display:none;margin-top:.65rem;padding:.7rem .85rem;border-radius:9px;background:rgba(234,179,8,.04);border:1px solid rgba(234,179,8,.18);">
+            <div style="font-size:.79rem;font-weight:700;color:#fde68a;margin-bottom:.55rem;"><i class="fa-solid fa-bolt" style="margin-right:.3rem;font-size:.72rem;"></i>Configure Auto-run</div>
+            <div style="display:flex;gap:.5rem;align-items:flex-end;flex-wrap:wrap;">
+              <div style="flex:1;min-width:130px;">
+                <label style="font-size:.74rem;color:var(--text-muted);display:block;margin-bottom:.28rem;">Script Name</label>
+                <input id="autorun-name" type="text" placeholder="Name for this auto-run" />
+              </div>
+              <div>
+                <label style="font-size:.74rem;color:var(--text-muted);display:block;margin-bottom:.28rem;">Trigger</label>
+                <select id="autorun-trigger" style="width:auto;">
+                  <option value="on_connect">Every Connect</option>
+                  <option value="on_first_connect">First Connect Only</option>
+                </select>
+              </div>
+              <button id="autorun-save-btn" class="btn btn-accent" style="white-space:nowrap;"><i class="fa-solid fa-bolt"></i> Save</button>
+              <button id="autorun-cancel-btn" class="btn btn-ghost btn-icon"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column: saved scripts + templates -->
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+
+          <!-- Saved scripts -->
+          <div class="card">
+            <div class="card-title"><i class="fa-solid fa-bookmark"></i> Saved Scripts</div>
+            <div style="display:flex;gap:.5rem;margin-bottom:.7rem;">
+              <input id="script-save-name" type="text" placeholder="Name this script" style="flex:1;" />
+              <button id="save-script-btn" class="btn btn-accent btn-icon"><i class="fa-solid fa-floppy-disk"></i></button>
+            </div>
+            <div id="saved-scripts-list" class="saved-list" style="max-height:200px;overflow-y:auto;">
+              <div class="empty-state" style="padding:.7rem;">No saved scripts yet.</div>
+            </div>
+          </div>
+
+          <!-- Auto-run Scripts -->
+          <div class="card">
+            <div class="card-title" style="margin-bottom:.5rem;"><i class="fa-solid fa-bolt" style="color:#fde68a;"></i> Auto-run</div>
+            <p style="font-size:.75rem;color:var(--text-muted);margin-bottom:.7rem;line-height:1.5;">Scripts run automatically when any client connects.</p>
+            <div id="autorun-list"><div class="empty-state" style="padding:.5rem;">No auto-run scripts yet.</div></div>
+          </div>
+
+          <!-- Script templates -->
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.7rem;">
+              <div class="card-title" style="flex:1;margin-bottom:0;"><i class="fa-solid fa-layer-group"></i> Templates</div>
+              <input id="template-search" type="search" placeholder="Search…" style="width:120px;font-size:.78rem;padding:.35rem .65rem;" />
+            </div>
+            <div id="template-palette" style="max-height:400px;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;"></div>
+          </div>
+        </div>
+
+        <!-- Output (full width) -->
+        <div class="col-3 card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
+            <div class="card-title" style="margin-bottom:0;"><i class="fa-solid fa-terminal"></i> Output</div>
+            <button id="clear-output-btn" class="btn btn-ghost btn-sm"><i class="fa-solid fa-trash"></i> Clear</button>
+          </div>
+          <div id="output-container" class="output-area">
+            <span class="out-dim">No output yet. Execute a script to see results.</span>
+          </div>
+        </div>
+
+      </div><!-- /grid -->
+    </main>
+
+    <script>
+      function toggleNav() {
+        const panel = document.getElementById('nav-panel');
+        const overlay = document.getElementById('nav-overlay');
+        const isOpen = panel.classList.toggle('open');
+        overlay.classList.toggle('open', isOpen);
+        if (isOpen) {
+          window.addEventListener('scroll', () => {
+            panel.classList.remove('open');
+            overlay.classList.remove('open');
+          }, { once: true, passive: true });
+        }
+      }
+
+      let _bellUnread = 0;
+      function applyBellState(active) {
+        const btn = document.getElementById("bell-btn");
+        if (!btn) return;
+        if (active) { btn.classList.add("bell-active"); btn.title = "Notifications on — click to mute"; }
+        else { btn.classList.remove("bell-active"); btn.title = "Notifications off — click to enable"; }
+      }
+      function toggleBell() {
+        const active = localStorage.getItem("nubyone_notifications_enabled") !== "false";
+        const next = !active;
+        localStorage.setItem("nubyone_notifications_enabled", next ? "true" : "false");
+        applyBellState(next);
+      }
+      function updateBadge(n) {
+        _bellUnread = n;
+        const badge = document.getElementById("bell-badge");
+        if (badge) { badge.textContent = n > 99 ? "99+" : String(n); badge.style.display = n > 0 ? "" : "none"; }
+      }
+      async function loadBellCount() {
+        try {
+          const data = await fetch("/api/notifications?limit=50").then(r => r.json());
+          updateBadge(Array.isArray(data) ? data.filter(n => !n.read).length : 0);
+        } catch {}
+      }
+      function showAgentToast(event, host) {
+        if (!document.getElementById("_agentToastCss")) {
+          const s = document.createElement("style"); s.id = "_agentToastCss";
+          s.textContent = "@keyframes _agIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}";
+          document.head.appendChild(s);
+        }
+        let wrap = document.getElementById("_agentToastWrap");
+        if (!wrap) {
+          wrap = document.createElement("div"); wrap.id = "_agentToastWrap";
+          wrap.style.cssText = "position:fixed;bottom:1.2rem;right:1.2rem;z-index:10000;display:flex;flex-direction:column;gap:.35rem;align-items:flex-end;pointer-events:none;";
+          document.body.appendChild(wrap);
+        }
+        const online = event === "connect";
+        const h = (host||"agent").length > 22 ? (host||"agent").slice(0,20)+"…" : (host||"agent");
+        const el = document.createElement("div");
+        el.style.cssText = "display:inline-flex;align-items:center;gap:.4rem;padding:.28rem .65rem;border-radius:99px;font-size:.71rem;font-weight:600;font-family:inherit;background:#0a1628;border:1px solid " + (online ? "rgba(34,197,94,.45)" : "rgba(100,116,139,.3)") + ";color:" + (online ? "#4ade80" : "#94a3b8") + ";box-shadow:0 4px 20px rgba(0,0,0,.5);animation:_agIn .18s ease;white-space:nowrap;";
+        el.innerHTML = '<i class="fa-solid ' + (online ? "fa-circle-dot" : "fa-circle-xmark") + '" style="font-size:.6rem;"></i>' + (online ? "Online" : "Offline") + ": <b style='font-weight:700'>" + h + "</b>";
+        wrap.appendChild(el);
+        setTimeout(() => { el.style.transition = "opacity .2s,transform .2s"; el.style.opacity = "0"; el.style.transform = "translateX(8px)"; setTimeout(() => el.remove(), 220); }, 2500);
+      }
+      function initNotifWs() {
+        const proto = location.protocol === "https:" ? "wss:" : "ws:";
+        const ws = new WebSocket(`${proto}//${location.host}/api/notifications/ws`);
+        ws.onmessage = (e) => { try { const msg = JSON.parse(e.data); if (msg.type === "client_event") { updateBadge(_bellUnread + 1); showAgentToast(msg.event, msg.host); } } catch {} };
+        ws.onclose = () => setTimeout(initNotifWs, 3000);
+      }
+
+      async function logout() {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/login';
+      }
+
+      
+
+      const ROLE_LABELS = { admin: "Administrator", operator: "Operator", viewer: "Viewer" };
+      async function checkAuth() {
+        try {
+          const res = await fetch('/api/auth/me');
+          if (!res.ok) { window.location.href = '/login'; return; }
+          const data = await res.json();
+          document.getElementById('username-display').textContent = data.username;
+          document.getElementById('role-display').textContent = ROLE_LABELS[data.role] || data.role || '—';
+          if (data.role === 'admin') {
+            document.getElementById('admin-nav-btn').style.display = '';
+            document.getElementById('settings-nav-btn').style.display = '';
+          }
+        } catch { window.location.href = '/login'; }
+      }
+
+      // Mode toggle
+      document.getElementById('mode-toggle-code').addEventListener('click', () => {
+        document.getElementById('mode-toggle-code').classList.add('active');
+        document.getElementById('mode-toggle-visual').classList.remove('active');
+        document.getElementById('code-editor-section').style.display = '';
+        document.getElementById('visual-builder-section').style.display = 'none';
+      });
+      document.getElementById('mode-toggle-visual').addEventListener('click', () => {
+        document.getElementById('mode-toggle-visual').classList.add('active');
+        document.getElementById('mode-toggle-code').classList.remove('active');
+        document.getElementById('visual-builder-section').style.display = '';
+        document.getElementById('code-editor-section').style.display = 'none';
+      });
+
+      checkAuth();
+      applyBellState(localStorage.getItem("nubyone_notifications_enabled") !== "false");
+      loadBellCount();
+      initNotifWs();
+    </script>
+    <script src="/assets/scripts.js"></script>
+    <script src="/assets/notif-drawer.js"></script>
+  </body>
+</html>

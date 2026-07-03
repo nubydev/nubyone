@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>𝗡𝘂𝗯𝘆𝗢𝗻𝗲 – Console</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
+        color-scheme: dark;
+        --bg: #0c2645;
+        --bar-bg: rgba(2,8,20,.98);
+        --border: rgba(34,211,238,.18);
+        --accent: #22d3ee;
+        --accent-soft: rgba(34,211,238,.2);
+        --text: #eef5ff;
+        --text-muted: #93c5e8;
+        --text-dim: #3d6085;
+        --card-bg: rgba(8,28,60,.45);
+        --term-bg: #020d0d;
+      }
+      html, body { color: var(--text); min-height: 100vh; }
+      ::-webkit-scrollbar { width: 4px; height: 4px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: rgba(34,211,238,.5); border-radius: 99px; }
+      ::-webkit-scrollbar-thumb:hover { background: rgba(34,211,238,.75); }
+      * { scrollbar-width: thin; scrollbar-color: rgba(34,211,238,.5) transparent; }
+      body {
+        display: flex; flex-direction: column;
+        background:
+          radial-gradient(ellipse 80% 60% at 15% 10%, rgba(14,165,233,.42) 0%, transparent 55%),
+          radial-gradient(ellipse 70% 55% at 85% 80%, rgba(34,211,238,.2) 0%, transparent 55%),
+          #0c2645;
+        background-attachment: fixed;
+      }
+
+      /* ── Top bar ─────────────────────────────────────────── */
+      .topbar {
+        position: sticky; top: 0; z-index: 30;
+        display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+        padding: 0 1.25rem;
+        height: 52px;
+        background: var(--bar-bg);
+        border-bottom: 1px solid var(--border);
+        backdrop-filter: blur(10px);
+        flex-shrink: 0;
+      }
+      .topbar-left { display: flex; align-items: center; gap: .65rem; }
+      @keyframes logo-bounce { 0%,100%{transform:translateY(3px)} 50%{transform:translateY(-3px)} }
+      .logo-bounce { animation: logo-bounce 2.2s ease-in-out infinite; display: inline-flex; align-items: center; }
+      .logo-img-icon-sm { width: 28px; height: 28px; object-fit: contain; border-radius: 6px; flex-shrink: 0; }
+      .logo-name { font-size: .95rem; font-weight: 700; color: #f8fbff; }
+      .breadcrumb { color: var(--text-dim); font-size: .87rem; display: flex; align-items: center; gap: .4rem; }
+      .breadcrumb i { font-size: .65rem; }
+      .topbar-right { display: flex; align-items: center; gap: .55rem; }
+
+      /* ── Buttons ─────────────────────────────────────────── */
+      .btn {
+        display: inline-flex; align-items: center; gap: .38rem;
+        padding: .62rem .9rem; border-radius: 9px; border: none;
+        font-size: .82rem; font-weight: 600; font-family: inherit;
+        cursor: pointer; transition: opacity .12s, background .12s; white-space: nowrap;
+      }
+      .btn-primary { background: linear-gradient(135deg,#0891b2,#22d3ee); color: #fff; }
+      .btn-primary:hover { opacity: .88; }
+      .btn-ghost { background: rgba(255,255,255,.05); border: 1px solid var(--border); color: #c4c9f8; }
+      .btn-ghost:hover { background: rgba(255,255,255,.09); }
+      .btn-sm { padding: .5rem .7rem; font-size: .775rem; }
+      .btn-icon { padding: .45rem .6rem; }
+
+      /* ── Status pill — classes set by console.js ─────────── */
+      .pill {
+        display: inline-flex; align-items: center; gap: .38rem;
+        padding: .28rem .75rem; border-radius: 999px; font-size: .75rem; font-weight: 600;
+        border: 1px solid transparent;
+      }
+      .pill-online  { background: rgba(34,197,94,.1); border-color: rgba(34,197,94,.28); color: #4ade80; }
+      .pill-offline { background: rgba(100,116,139,.1); border-color: rgba(100,116,139,.28); color: #94a3b8; }
+      .pill-ghost   { background: rgba(99,102,241,.1); border-color: rgba(99,102,241,.28); color: #818cf8; }
+
+      /* ── Main layout ─────────────────────────────────────── */
+      .main {
+        flex: 1; display: flex; flex-direction: column;
+        padding: 1.25rem 1.5rem; gap: 1rem; min-height: 0;
+      }
+
+      /* ── Info bar ────────────────────────────────────────── */
+      .info-bar {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(130px,1fr));
+        gap: .65rem;
+      }
+      .info-card {
+        background: var(--card-bg); border: 1px solid var(--border);
+        border-radius: 10px; padding: .65rem .9rem;
+      }
+      .info-label { font-size: .68rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; margin-bottom: .2rem; }
+      .info-value { font-size: .875rem; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+      /* ── Terminal ────────────────────────────────────────── */
+      .terminal-wrap {
+        flex: 1; display: flex; flex-direction: column;
+        background: var(--card-bg); border: 1px solid var(--border);
+        border-radius: 12px; overflow: hidden; min-height: 0;
+      }
+      .terminal-titlebar {
+        display: flex; align-items: center; gap: .5rem;
+        padding: .55rem .9rem; border-bottom: 1px solid var(--border);
+        background: rgba(255,255,255,.018);
+        flex-shrink: 0;
+      }
+      .dot { width: 10px; height: 10px; border-radius: 50%; }
+      .dot-red   { background: rgba(239,68,68,.55); }
+      .dot-yellow{ background: rgba(234,179,8,.55); }
+      .dot-green { background: rgba(34,197,94,.55); }
+      .terminal-label { font-size: .73rem; color: var(--text-dim); margin-left: .3rem; font-family: "JetBrains Mono", monospace; }
+
+      .console-output {
+        flex: 1; overflow-y: auto; overflow-x: auto;
+        padding: 1rem;
+        background: var(--term-bg);
+        font-family: "JetBrains Mono", "Fira Code", monospace;
+        font-size: .82rem; line-height: 1.6;
+        color: var(--text);
+        min-height: 320px;
+        max-height: calc(100vh - 280px);
+      }
+      .console-pre { margin: 0; white-space: pre; display: block; width: max-content; min-width: 0; }
+
+      /* ── Input row ───────────────────────────────────────── */
+      .input-row {
+        display: flex; align-items: center; gap: .65rem;
+        padding: .75rem 1rem;
+        border-top: 1px solid var(--border);
+        background: rgba(255,255,255,.018);
+        flex-shrink: 0;
+      }
+      .prompt { color: #6ee7b7; font-family: "JetBrains Mono", monospace; font-size: .85rem; font-weight: 600; flex-shrink: 0; }
+      .input-row textarea {
+        flex: 1; resize: none; min-height: 36px; max-height: 120px;
+        background: transparent; border: none; outline: none;
+        color: var(--text); font-family: "JetBrains Mono", monospace;
+        font-size: .82rem; line-height: 1.5; padding: .1rem 0;
+      }
+      .input-actions { display: flex; gap: .45rem; flex-shrink: 0; }
+
+      /* ── Responsive ──────────────────────────────────────── */
+      @media (max-width: 600px) {
+        .main { padding: .85rem; }
+        .breadcrumb .bc-text { display: none; }
+        .input-row { flex-wrap: wrap; }
+        .input-actions { width: 100%; justify-content: flex-end; }
+      }
+    </style>
+      <script src="/assets/branding.js"></script>
+  </head>
+  <body>
+
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="logo-bounce"><img src="/assets/logo.png" alt="𝗡𝘂𝗯𝘆𝗢𝗻𝗲" class="logo-img-icon-sm" /></span>
+        <span class="logo-name">𝗡𝘂𝗯𝘆𝗢𝗻𝗲</span>
+        <div class="breadcrumb">
+          <i class="fa-solid fa-chevron-right"></i>
+          <span class="bc-text">Console</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span id="status-pill" class="pill pill-offline">
+          <i class="fa-solid fa-circle fa-xs"></i> Connecting…
+        </span>
+        <a href="/clients" class="btn btn-ghost btn-sm" style="text-decoration:none;">
+          <i class="fa-solid fa-arrow-left"></i> Machines
+        </a>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="info-bar">
+        <div class="info-card">
+          <div class="info-label">Client</div>
+          <div class="info-value" id="client-label">—</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">Host</div>
+          <div class="info-value" id="host-label">—</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">User</div>
+          <div class="info-value" id="user-label">—</div>
+        </div>
+        <div class="info-card">
+          <div class="info-label">OS</div>
+          <div class="info-value" id="os-label">—</div>
+        </div>
+      </div>
+
+      <div class="terminal-wrap">
+        <div class="terminal-titlebar">
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+          <span class="terminal-label">shell</span>
+        </div>
+        <div id="console-output" class="console-output" aria-live="polite"></div>
+        <form id="console-form" class="input-row">
+          <span class="prompt">$</span>
+          <textarea
+            id="console-input"
+            rows="1"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Type a command and press Enter…"
+          ></textarea>
+          <div class="input-actions">
+            <button type="button" id="ctrlc-btn" class="btn btn-ghost btn-sm" title="Send Ctrl+C">
+              <i class="fa-solid fa-ban"></i> Ctrl+C
+            </button>
+            <button type="submit" class="btn btn-primary btn-sm">
+              <i class="fa-solid fa-paper-plane"></i> Send
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/msgpackr@1.11.8/dist/index.js"></script>
+    <script type="module" src="/assets/console.js"></script>
+  </body>
+</html>

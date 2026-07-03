@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>𝗡𝘂𝗯𝘆𝗢𝗻𝗲 – Sign In</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/assets/main.css" />
+    <style>
+      :root { font-family: "Inter", "Segoe UI", system-ui, sans-serif; }
+
+      body {
+        display: flex; align-items: center; justify-content: center;
+        min-height: 100vh; margin: 0;
+        background:
+          radial-gradient(ellipse 80% 60% at 20% 10%, rgba(14,165,233,.42) 0%, transparent 55%),
+          radial-gradient(ellipse 70% 55% at 80% 80%, rgba(34,211,238,.38) 0%, transparent 55%),
+          radial-gradient(ellipse 100% 100% at 50% 50%, rgba(6,40,80,.3) 0%, transparent 80%),
+          #0c2645;
+        background-attachment: fixed;
+      }
+
+      .bg-grid {
+        position: fixed; inset: 0; pointer-events: none;
+        background-image:
+          linear-gradient(rgba(6,182,212,.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(6,182,212,.05) 1px, transparent 1px);
+        background-size: 48px 48px;
+      }
+
+      .glow {
+        position: fixed; top: -15%; left: 50%; transform: translateX(-50%);
+        width: 700px; height: 450px; border-radius: 50%;
+        background: radial-gradient(ellipse, rgba(34,211,238,.2) 0%, transparent 65%);
+        pointer-events: none;
+      }
+
+      .glow-bottom {
+        position: fixed; bottom: -15%; right: 10%;
+        width: 500px; height: 350px; border-radius: 50%;
+        background: radial-gradient(ellipse, rgba(14,165,233,.16) 0%, transparent 65%);
+        pointer-events: none;
+      }
+
+      .card {
+        position: relative; z-index: 10; width: 100%; max-width: 420px; margin: 1.5rem;
+        background: rgba(10,38,82,.88);
+        border: 1px solid rgba(34,211,238,.2);
+        border-radius: 20px; padding: 2.75rem 2.5rem;
+        box-shadow:
+          0 28px 56px rgba(0,0,0,.55),
+          0 0 0 1px rgba(34,211,238,.1),
+          inset 0 1px 0 rgba(255,255,255,.06);
+        backdrop-filter: blur(20px) saturate(1.4);
+        -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      }
+
+      .logo {
+        display: flex; flex-direction: column; align-items: center;
+        gap: .6rem; margin-bottom: 1.75rem; text-align: center;
+      }
+
+      .logo-name { font-size: 1.5rem; font-weight: 700; color: #f0fffe; letter-spacing: -.02em; }
+      .logo-sub { font-size: .75rem; color: #7dd8f0; font-weight: 400; }
+
+      h2 { color: #f0fffe; font-size: 1.25rem; font-weight: 600; margin: 0 0 .25rem; text-align: center; }
+      p.sub { color: #7dd8f0; font-size: .85rem; margin: 0 0 1.75rem; text-align: center; }
+
+      .field { margin-bottom: 1rem; }
+      label { display: block; font-size: .8rem; color: #7dd8f0; margin-bottom: .4rem; font-weight: 500; }
+      .input-wrap { position: relative; }
+      .input-wrap i { position: absolute; left: .9rem; top: 50%; transform: translateY(-50%); color: #2a5580; font-size: .85rem; }
+      input[type=text], input[type=password] {
+        width: 100%; padding: .7rem .9rem .7rem 2.4rem; border-radius: 10px;
+        border: 1px solid rgba(34,211,238,.18);
+        background: rgba(8,48,100,.5); color: #e0f5ff; font-size: .9rem;
+        font-family: inherit; outline: none;
+        transition: border-color .15s, box-shadow .15s; box-sizing: border-box;
+      }
+      input:focus { border-color: #22d3ee; box-shadow: 0 0 0 3px rgba(34,211,238,.25); }
+
+      .btn {
+        width: 100%; padding: .8rem; border: none; border-radius: 10px; cursor: pointer;
+        font-size: .9rem; font-weight: 600;
+        background: linear-gradient(135deg, #0891b2, #22d3ee);
+        color: #fff; font-family: inherit;
+        transition: opacity .15s, transform .1s, box-shadow .15s;
+        display: flex; align-items: center; justify-content: center; gap: .5rem;
+        margin-top: 1.5rem;
+        box-shadow: 0 4px 20px rgba(34,211,238,.45);
+      }
+      .btn:hover { opacity: .9; box-shadow: 0 6px 28px rgba(34,211,238,.6); }
+      .btn:active { transform: scale(.98); }
+      .btn:disabled { opacity: .6; cursor: not-allowed; }
+
+      .error { color: #f87171; font-size: .82rem; margin-top: .75rem; text-align: center; min-height: 1.2em; }
+      .join-link { text-align: center; margin-top: 1.5rem; font-size: .83rem; color: #7ecece; }
+      .join-link a { color: #22d3ee; text-decoration: none; font-weight: 500; }
+      .join-link a:hover { text-decoration: underline; }
+
+      @keyframes logo-bounce { 0%,100%{transform:translateY(5px)} 50%{transform:translateY(-5px)} }
+      .logo-bounce { animation: logo-bounce 2.2s ease-in-out infinite; display: inline-flex; align-items: center; }
+      .logo-img-icon-lg { width: 56px; height: 56px; object-fit: contain; border-radius: 14px; }
+    </style>
+      <script src="/assets/branding.js"></script>
+  </head>
+  <body>
+    <div class="bg-grid"></div>
+    <div class="glow"></div>
+    <div class="glow-bottom"></div>
+    <div class="card">
+      <div class="logo">
+        <span class="logo-bounce"><img src="/assets/logo.png" alt="𝗡𝘂𝗯𝘆𝗢𝗻𝗲" class="logo-img-icon-lg" /></span>
+        <div>
+          <div class="logo-name">𝗡𝘂𝗯𝘆𝗢𝗻𝗲</div>
+          <!--<div class="logo-sub">Remote Support Platform</div>-->
+        </div>
+      </div>
+      <h2>Sign in</h2>
+      <p class="sub" data-app-name>Access {{appName}} RMM</p>
+      <form id="login-form">
+        <div class="field">
+          <label for="username">Username</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-user"></i>
+            <input id="username" type="text" placeholder="Enter username" autocomplete="username" required />
+          </div>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <i class="fa-solid fa-lock"></i>
+            <input id="password" type="password" placeholder="Enter password" autocomplete="current-password" required />
+          </div>
+        </div>
+        <button type="submit" class="btn" id="submit-btn">
+          <span>Sign in</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <div class="error" id="error-msg"></div>
+      </form>
+      <!--<div class="join-link">
+        Need to join a session? <a href="/join">Join as guest &rarr;</a>
+      </div>-->
+    </div>
+    <script>
+      document.getElementById("login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("submit-btn");
+        const errEl = document.getElementById("error-msg");
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Signing in…';
+        errEl.textContent = "";
+        try {
+          const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              username: document.getElementById("username").value,
+              password: document.getElementById("password").value,
+            }),
+          });
+          const data = await res.json();
+          if (res.ok) {
+            window.location.href = "/clients";
+          } else {
+            errEl.textContent = data.error || "Login failed";
+            btn.disabled = false;
+            btn.innerHTML = '<span>Sign in</span><i class="fa-solid fa-arrow-right"></i>';
+          }
+        } catch {
+          errEl.textContent = "Network error. Please try again.";
+          btn.disabled = false;
+          btn.innerHTML = '<span>Sign in</span><i class="fa-solid fa-arrow-right"></i>';
+        }
+      });
+    </script>
+  </body>
+</html>

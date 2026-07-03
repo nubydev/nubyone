@@ -1,0 +1,14 @@
+{
+  "customCSS": "",
+  "security": {
+    "sessionTtlHours": 72,
+    "loginMaxAttempts": 3,
+    "loginWindowMinutes": 15,
+    "loginLockoutMinutes": 30,
+    "passwordMinLength": 8,
+    "passwordRequireUppercase": true,
+    "passwordRequireLowercase": false,
+    "passwordRequireNumber": false,
+    "passwordRequireSymbol": false
+  }
+}
