@@ -1,8 +1,0 @@
-start my app to be live in preview, also I need you to rigorously and carefully go through the whole project structure and find any incomplete functionality, bugs and bound to fail or broken logic
-
-
-youre not allowed to break the current progress on my app, on no account should you cause errors ro the current functionality of my app, youre only permitted to improve upon the current structure with utmost sophistication and precision
-
-
-
-- fix immediately ━━━ Installing packages and building CSS ━━━ [✘] Nubyone-Server not found at /opt/nubyone/Nubyone-Server scamp@vm-fa2233d44cb38cb9 ~ $
