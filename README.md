@@ -2,4 +2,4 @@
 Advanced RMM
 
 
-JOIN COMMUNITY <https://t.me/knightwingx> FOR SUPPORT & COLLABORATION 
+JOIN Community (https://t.me/+5vRxpJoUVlRkMGZk) FOR SUPPORT & COLLABORATION 
